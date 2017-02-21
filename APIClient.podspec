@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/IntrepidPursuits/APIClient"
   s.license      = "MIT"
   s.author             = { "Mark Daigneault" => "markd@intrepid.io" }
-  s.source       = { :git => "https://github.com/IntrepidPursuits/auth-ios.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/IntrepidPursuits/APIClient.git", :tag => "#{s.version}" }
   s.exclude_files = "tests/**/*"
   s.platform      = :ios
   s.ios.deployment_target = "9.0"
