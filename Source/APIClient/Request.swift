@@ -23,28 +23,40 @@ enum Request {
 
     // MARK: - Request Types
 
-    case getTestObject(TestObject)
+    //case getTestObject(TestObject)
 
     // MARK: - NSURLRequest Construction
 
     var method: HTTPMethod {
         switch self {
+        /*
         case .getTestObject:
+            return .GET
+        */
+        default:
             return .GET
         }
     }
 
     var path: String {
         switch self {
+        /*
         case .getTestObject(let object):
             return "objects/\(object.identifier)"
+        */
+        default:
+            return ""
         }
     }
 
     var authenticated: Bool {
         switch self {
+        /*
         case .getTestObject:
             return true
+        */
+        default:
+            return false
         }
     }
 
@@ -64,7 +76,7 @@ enum Request {
         }
     }
 
-    var URLRequest: NSMutableURLRequest {
+    var URLRequest: URLRequest {
         let baseURL = Foundation.URL(string: Request.baseURLString)!
         let URL = baseURL.appendingPathComponent(path)
         let request = NSMutableURLRequest(url: URL)
@@ -83,7 +95,7 @@ enum Request {
 
         encodeQueryParameters(request: request, parameters: queryParameters)
         encodeHTTPBody(request: request, parameters: bodyParameters)
-        return request
+        return request as URLRequest
     }
 
     // MARK: - Parameters
