@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Genome
 
 enum HTTPMethod: String {
     case GET

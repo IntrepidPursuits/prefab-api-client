@@ -96,3 +96,18 @@ public extension APIClient {
         sendRequest(request, completion: dataRequestCompletion)
     }
 }
+
+extension Request {
+    fileprivate func encodeHTTPBody(request: NSMutableURLRequest, parameters: [String : AnyObject]?) {
+        guard let parameters = parameters else { return }
+
+        do {
+            // let node = Node(any: parameters)
+            // let json = try Data(node: node)
+            // request.httpBody = json
+        } catch {
+            print("Error creating JSON paramters")
+        }
+    }
+
+}
