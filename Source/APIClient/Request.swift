@@ -33,6 +33,7 @@ public protocol Request {
 }
 
 public extension Request {
+
     var urlRequest: URLRequest {
         let baseURL = Foundation.URL(string: Self.baseURL)!
         let url = Foundation.URL(string: path, relativeTo: baseURL)!
@@ -79,8 +80,8 @@ public extension Request {
         guard let parameters = parameters else { return }
 
         do {
-            let json = try JSONSerialization.data(withJSONObject: parameters, options: [])
-            request.httpBody = json
+            let data = try JSONSerialization.data(withJSONObject: parameters, options: [])
+            request.httpBody = data
         } catch {
             print("Error creating JSON paramters")
         }
