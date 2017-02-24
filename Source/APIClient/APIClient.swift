@@ -16,7 +16,7 @@ enum APIClientError: Error {
     case unknown
 }
 
-public class APIClient {
+open class APIClient {
 
     public let session: URLSession
 

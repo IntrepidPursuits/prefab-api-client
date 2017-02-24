@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import Genome
 
-enum HTTPMethod: String {
+public enum HTTPMethod: String {
     case GET
     case POST
     case PATCH
@@ -16,77 +15,37 @@ enum HTTPMethod: String {
     case DELETE
 }
 
-enum Request {
-    static let baseURLString = "https://<your-server-here>.herokuapp.com"
-    static let version = "1"
-    static var authToken: String?
+public protocol Request {
+    static var baseURL: String { get }
+    static var version: String { get }
+    static var authToken: String? { get set }
 
-    // MARK: - Request Types
+    var method: HTTPMethod { get }
+    var path: String { get }
+    var authenticated: Bool { get }
+    var queryParameters: [String: AnyObject]? { get }
+    var bodyParameters: [String: AnyObject]? { get }
 
-    //case getTestObject(TestObject)
+    var urlRequest: URLRequest { get }
 
-    // MARK: - NSURLRequest Construction
+    func encodeQueryParameters(request: NSMutableURLRequest, parameters: [String : AnyObject]?)
+    func encodeHTTPBody(request: NSMutableURLRequest, parameters: [String : AnyObject]?)
+}
 
-    var method: HTTPMethod {
-        switch self {
-        /*
-        case .getTestObject:
-            return .GET
-        */
-        default:
-            return .GET
-        }
-    }
+public extension Request {
 
-    var path: String {
-        switch self {
-        /*
-        case .getTestObject(let object):
-            return "objects/\(object.identifier)"
-        */
-        default:
-            return ""
-        }
-    }
+    var urlRequest: URLRequest {
+        let baseURL = Foundation.URL(string: Self.baseURL)!
+        let url = Foundation.URL(string: path, relativeTo: baseURL)!
 
-    var authenticated: Bool {
-        switch self {
-        /*
-        case .getTestObject:
-            return true
-        */
-        default:
-            return false
-        }
-    }
-
-    var queryParameters: [String : AnyObject]? {
-        switch self {
-            // Serialize query/body parameters
-        default:
-            return nil
-        }
-    }
-    
-    var bodyParameters: [String : AnyObject]? {
-        switch self {
-        // Serialize query/body parameters
-        default:
-            return nil
-        }
-    }
-
-    var URLRequest: URLRequest {
-        let baseURL = Foundation.URL(string: Request.baseURLString)!
-        let URL = baseURL.appendingPathComponent(path)
-        let request = NSMutableURLRequest(url: URL)
+        let request = NSMutableURLRequest(url: url)
         request.httpMethod = method.rawValue
 
-        request.setValue("application/<your-server-here>; version=\(Request.version)", forHTTPHeaderField: "Accept")
+        request.setValue("application/<your-server-here>; version=\(Self.version)", forHTTPHeaderField: "Accept")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         if authenticated {
-            if let token = Request.authToken {
+            if let token = Self.authToken {
                 request.setValue("Token token=\(token)", forHTTPHeaderField: "Authorization")
             } else {
                 print("Error: authenticated request missing token: %@", request)
@@ -95,17 +54,16 @@ enum Request {
 
         encodeQueryParameters(request: request, parameters: queryParameters)
         encodeHTTPBody(request: request, parameters: bodyParameters)
+
         return request as URLRequest
     }
 
-    // MARK: - Parameters
-
-    fileprivate func encodeQueryParameters(request: NSMutableURLRequest, parameters: [String : AnyObject]?) {
-        guard let URL = request.url,
-            var components = URLComponents(url: URL, resolvingAgainstBaseURL: false),
+    func encodeQueryParameters(request: NSMutableURLRequest, parameters: [String : AnyObject]?) {
+        guard let url = request.url,
+            var components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let stringParameters = parameters as? [String : String]
             else { return }
-        
+
         let queryParameterStringComponents: [String] = stringParameters.map { parameter in
             let key = parameter.0
             let value = parameter.1
@@ -117,15 +75,13 @@ enum Request {
         components.percentEncodedQuery = percentEncondedQuery
         request.url = components.url
     }
-    
-    
-    fileprivate func encodeHTTPBody(request: NSMutableURLRequest, parameters: [String : AnyObject]?) {
+
+    func encodeHTTPBody(request: NSMutableURLRequest, parameters: [String : AnyObject]?) {
         guard let parameters = parameters else { return }
 
         do {
-            let node = Node(any: parameters)
-            let json = try Data(node: node)
-            request.httpBody = json
+            let data = try JSONSerialization.data(withJSONObject: parameters, options: [])
+            request.httpBody = data
         } catch {
             print("Error creating JSON paramters")
         }
