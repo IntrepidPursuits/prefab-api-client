@@ -18,6 +18,7 @@ public enum HTTPMethod: String {
 public protocol Request {
     static var baseURL: String { get }
     static var version: String { get }
+    static var serverAddress: String? { get }
     static var authToken: String? { get set }
 
     var method: HTTPMethod { get }
@@ -25,6 +26,7 @@ public protocol Request {
     var authenticated: Bool { get }
     var queryParameters: [String: AnyObject]? { get }
     var bodyParameters: [String: AnyObject]? { get }
+    var contentType: String { get }
 
     var urlRequest: URLRequest { get }
 
@@ -34,15 +36,22 @@ public protocol Request {
 
 public extension Request {
 
+    var contentType: String {
+        switch self {
+        default:
+            return "application/json"
+        }
+    }
+
     var urlRequest: URLRequest {
         let baseURL = Foundation.URL(string: Self.baseURL)!
-        let url = Foundation.URL(string: path, relativeTo: baseURL)!
+        let url = Foundation.URL(string: path, relativeTo: baseURL) ?? baseURL
 
         let request = NSMutableURLRequest(url: url)
         request.httpMethod = method.rawValue
 
-        request.setValue("application/<your-server-here>; version=\(Self.version)", forHTTPHeaderField: "Accept")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/\(Self.serverAddress ?? ""); version=\(Self.version)", forHTTPHeaderField: "Accept")
+        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
 
         if authenticated {
             if let token = Self.authToken {
