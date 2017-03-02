@@ -17,8 +17,7 @@ public enum HTTPMethod: String {
 
 public protocol Request {
     static var baseURL: String { get }
-    static var version: String { get }
-    static var serverAddress: String? { get }
+    static var acceptHeader: String? { get }
     static var authToken: String? { get set }
 
     var method: HTTPMethod { get }
@@ -36,6 +35,8 @@ public protocol Request {
 
 public extension Request {
 
+    static var acceptHeader: String? { return nil }
+
     var contentType: String {
         switch self {
         default:
@@ -50,7 +51,7 @@ public extension Request {
         let request = NSMutableURLRequest(url: url)
         request.httpMethod = method.rawValue
 
-        request.setValue("application/\(Self.serverAddress ?? ""); version=\(Self.version)", forHTTPHeaderField: "Accept")
+        request.setValue(Self.acceptHeader, forHTTPHeaderField: "Accept")
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
 
         if authenticated {
