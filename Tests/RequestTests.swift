@@ -12,7 +12,7 @@ import XCTest
 struct TestRequest: Request {
 
     static var baseURL: String {
-        return "http://intrepid.io"
+        return "http://www.intrepid.io"
     }
 
     static var acceptHeader: String? {
@@ -37,15 +37,15 @@ struct TestRequest: Request {
 
     var queryParameters: [String : Any]? {
         return [
-            "param1" : 1,
-            "param2" : 2
+            "param1" : "1",
+            "param2" : "2"
         ]
     }
 
     var bodyParameters: [String : Any]? {
         return [
             "object" : [
-                "id" : 1,
+                "id" : "1",
                 "name" : "test"
             ]
         ]
@@ -57,27 +57,43 @@ struct TestRequest: Request {
 }
 
 class RequestTests: XCTestCase {
-    
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+
+    let testRequest = TestRequest()
+    lazy var sut: URLRequest = self.testRequest.urlRequest
+
+    func testURL() {
+        let url = URL(string: "http://www.intrepid.io/test?param1=1&param2=2")
+        XCTAssertEqual(sut.url, url)
     }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
+
+    func testHTTPMethod() {
+        XCTAssertEqual(sut.httpMethod, testRequest.method.rawValue)
     }
-    
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+
+    func testBody() {
+        guard let httpBody = sut.httpBody else {
+            XCTFail("HTTP body data nil")
+            return
+        }
+        do {
+            guard
+                let json = try JSONSerialization.jsonObject(with: httpBody, options: []) as? [String : Any],
+                let jsonObject = json["object"] as? [String : String],
+                let bodyParameterObject = testRequest.bodyParameters?["object"] as? [String : String]
+            else {
+                XCTFail("Unable to get dictionary object from HTTP body json")
+                return
+            }
+            XCTAssertEqual(jsonObject, bodyParameterObject)
+        } catch {
+            XCTFail("Unable to deserialize HTTP body data")
         }
     }
-    
+
+    func testHTTPHeaderValues() {
+        let headers = sut.allHTTPHeaderFields
+        XCTAssertEqual(headers?["Accept"], TestRequest.acceptHeader)
+        XCTAssertEqual(headers?["Content-Type"], testRequest.contentType)
+        XCTAssertEqual(headers?["Authorization"], "Token token=\(TestRequest.authToken!)")
+    }
 }
