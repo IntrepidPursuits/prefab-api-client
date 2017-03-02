@@ -38,17 +38,19 @@ open class APIClient {
     internal func result(data: Data?, response: URLResponse?, error: Error?) -> Result<Data?> {
         if let error = error {
             return .failure(APIClientError.dataTaskError(error: error))
-        } else if let httpResponse = response as? HTTPURLResponse {
-            let statusCode = httpResponse.statusCode
-            switch statusCode {
-            case 200..<300:
-                return .success(data)
-            default:
-                let error = APIClientError.httpError(statusCode: statusCode, response: httpResponse, data: data)
-                return .failure(error)
-            }
-        } else {
+        }
+
+        guard let httpResponse = response as? HTTPURLResponse else {
             return .failure(APIClientError.unknown)
+        }
+
+        let statusCode = httpResponse.statusCode
+        switch statusCode {
+        case 200..<300:
+            return .success(data)
+        default:
+            let error = APIClientError.httpError(statusCode: statusCode, response: httpResponse, data: data)
+            return .failure(error)
         }
     }
 }
