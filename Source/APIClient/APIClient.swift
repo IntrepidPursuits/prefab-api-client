@@ -20,33 +20,35 @@ open class APIClient {
 
     public let session: URLSession
 
-    public convenience init() {
-        self.init(session: .shared)
-    }
-
-    public init(session: URLSession) {
+    public init(session: URLSession = .shared) {
         self.session = session
     }
 
     public func sendRequest(_ request: URLRequest, completion: ((Result<Data?>) -> Void)?) {
-        let dataTask = session.dataTask(with: request, completionHandler: { (data, response, error) in
-            guard let completion = completion else { return }
-
-            if let error = error {
-                completion(.failure(APIClientError.dataTaskError(error: error)))
-            } else if let httpResponse = response as? HTTPURLResponse {
-                let statusCode = httpResponse.statusCode
-                switch statusCode {
-                case 200..<300:
-                    completion(.success(data))
-                default:
-                    let error = APIClientError.httpError(statusCode: statusCode, response: httpResponse, data: data)
-                    completion(.failure(error))
-                }
-            } else {
-                completion(.failure(APIClientError.unknown))
-            }
+        let dataTask = session.dataTask(with: request, completionHandler: { [weak self] (data, response, error) in
+            guard
+                let welf = self,
+                let completion = completion
+            else { return }
+            completion(welf.result(data: data, response: response, error: error))
         })
         dataTask.resume()
+    }
+
+    internal func result(data: Data?, response: URLResponse?, error: Error?) -> Result<Data?> {
+        if let error = error {
+            return .failure(APIClientError.dataTaskError(error: error))
+        } else if let httpResponse = response as? HTTPURLResponse {
+            let statusCode = httpResponse.statusCode
+            switch statusCode {
+            case 200..<300:
+                return .success(data)
+            default:
+                let error = APIClientError.httpError(statusCode: statusCode, response: httpResponse, data: data)
+                return .failure(error)
+            }
+        } else {
+            return .failure(APIClientError.unknown)
+        }
     }
 }
