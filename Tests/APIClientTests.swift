@@ -10,27 +10,35 @@ import XCTest
 @testable import APIClient
 
 class APIClientTests: XCTestCase {
-    
+
+    let testURL = URL(string: "intrepid.io")!
+    var sut: APIClient!
+
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        sut = APIClient()
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        sut = nil
         super.tearDown()
     }
-    
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+
+    func testDataTaskErrorResult() {
+        let error = NSError()
+        let result = sut.result(data: nil, response: nil, error: error)
+        XCTAssert(result.isFailure)
     }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+
+    func testSuccessResult() {
+        let response = HTTPURLResponse(url: testURL, statusCode: 200, httpVersion: nil, headerFields: nil)
+        let result = sut.result(data: nil, response: response, error: nil)
+        XCTAssert(result.isSuccess)
     }
-    
+
+    func testStatusCodeErrorResult() {
+        let response = HTTPURLResponse(url: testURL, statusCode: 400, httpVersion: nil, headerFields: nil)
+        let result = sut.result(data: nil, response: response, error: nil)
+        XCTAssert(result.isFailure)
+    }
 }
