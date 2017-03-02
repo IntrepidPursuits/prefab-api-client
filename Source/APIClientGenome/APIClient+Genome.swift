@@ -16,83 +16,86 @@ public extension APIClient {
 
     public func sendRequest(_ request: URLRequest, completion: ((Result<Void>) -> Void)?) {
         let dataRequestCompletion: (Result<Data?>) -> Void = { dataResult in
-            guard let completion = completion else { return }
-
-            var result: Result<Void>
-
-            switch dataResult {
-            case .success(_):
-                result = .success()
-            case .failure(let error):
-                result = .failure(error)
-            }
-
             DispatchQueue.main.async {
-                completion(result)
+                completion?(self.voidResult(dataResult: dataResult))
             }
         }
         sendRequest(request, completion: dataRequestCompletion)
+    }
+
+    internal func voidResult(dataResult: Result<Data?>) -> Result<Void> {
+        switch dataResult {
+        case .success(_):
+            return .success()
+        case .failure(let error):
+            return .failure(error)
+        }
     }
 
     // MARK: - Singular Result Type
 
     public func sendRequest<T: MappableObject>(_ request: URLRequest, completion: ((Result<T>) -> Void)?) {
         let dataRequestCompletion: (Result<Data?>) -> Void = { dataResult in
-            guard let completion = completion else { return }
-
-            var result: Result<T>
-
-            switch dataResult {
-            case .success(let data):
-                result = .failure(APIClientError.unableToMapResult)
-                do {
-                    if let node = try data?.makeNode() {
-                        result = try .success(T(node: node))
-                    }
-                } catch {
-                    print("Error creating and mapping node: \(error)")
-                }
-            case .failure(let error):
-                result = .failure(error)
-            }
-
             DispatchQueue.main.async{
-                completion(result)
+                completion?(self.mappableObjectResult(dataResult: dataResult))
             }
         }
         sendRequest(request, completion: dataRequestCompletion)
+    }
+
+    internal func mappableObjectResult<T: MappableObject>(dataResult: Result<Data?>) -> Result<T> {
+        var result: Result<T>
+
+        switch dataResult {
+        case .success(let data):
+            result = .failure(APIClientError.unableToMapResult)
+            do {
+                if let node = try data?.makeNode() {
+                    result = try .success(T(node: node))
+                }
+            } catch {
+                print("Error creating and mapping node: \(error)")
+            }
+        case .failure(let error):
+            result = .failure(error)
+        }
+
+        return result
     }
 
     // MARK: - Array Result Type
 
     public func sendRequest<T: MappableObject>(_ request: URLRequest, completion: ((Result<[T]>) -> Void)?) {
         let dataRequestCompletion: (Result<Data?>) -> Void = { dataResult in
-            guard let completion = completion else { return }
-
-            var result: Result<[T]>
-
-            switch dataResult {
-            case .success(let data):
-                result = .failure(APIClientError.unableToMapResult)
-                do {
-                    if let node = try data?.makeNode() {
-                        if node.isNull {
-                            result = .success([T]())
-                        } else {
-                            try result = .success([T](node: node))
-                        }
-                    }
-                } catch {
-                    print("Error creating and mapping array node: \(error)")
-                }
-            case .failure(let error):
-                result = .failure(error)
-            }
-
             DispatchQueue.main.async{
-                completion(result)
+                completion?(self.mappableArrayResult(dataResult: dataResult))
             }
         }
         sendRequest(request, completion: dataRequestCompletion)
     }
+
+    internal func mappableArrayResult<T: MappableObject>(dataResult: Result<Data?>) -> Result<[T]> {
+        var result: Result<[T]>
+
+        switch dataResult {
+        case .success(let data):
+            result = .failure(APIClientError.unableToMapResult)
+            do {
+                if let node = try data?.makeNode() {
+                    if node.isNull {
+                        result = .success([T]())
+                    } else {
+                        try result = .success([T](node: node))
+                    }
+                }
+            } catch {
+                print("Error creating and mapping array node: \(error)")
+            }
+        case .failure(let error):
+            result = .failure(error)
+        }
+
+        return result
+    }
+
 }
