@@ -18,31 +18,17 @@ public enum HTTPMethod: String {
 public protocol Request {
     static var baseURL: String { get }
     static var acceptHeader: String? { get }
-    static var authToken: String? { get set }
+    static var authToken: String? { get }
 
     var method: HTTPMethod { get }
     var path: String { get }
     var authenticated: Bool { get }
-    var queryParameters: [String: AnyObject]? { get }
-    var bodyParameters: [String: AnyObject]? { get }
+    var queryParameters: [String: Any]? { get }
+    var bodyParameters: [String: Any]? { get }
     var contentType: String { get }
-
-    var urlRequest: URLRequest { get }
-
-    func encodeQueryParameters(request: NSMutableURLRequest, parameters: [String : AnyObject]?)
-    func encodeHTTPBody(request: NSMutableURLRequest, parameters: [String : AnyObject]?)
 }
 
 public extension Request {
-
-    static var acceptHeader: String? { return nil }
-
-    var contentType: String {
-        switch self {
-        default:
-            return "application/json"
-        }
-    }
 
     var urlRequest: URLRequest {
         let baseURL = Foundation.URL(string: Self.baseURL)!
@@ -68,7 +54,7 @@ public extension Request {
         return request as URLRequest
     }
 
-    func encodeQueryParameters(request: NSMutableURLRequest, parameters: [String : AnyObject]?) {
+    private func encodeQueryParameters(request: NSMutableURLRequest, parameters: [String : Any]?) {
         guard let url = request.url,
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let stringParameters = parameters as? [String : String]
@@ -86,7 +72,7 @@ public extension Request {
         request.url = components.url
     }
 
-    func encodeHTTPBody(request: NSMutableURLRequest, parameters: [String : AnyObject]?) {
+    private func encodeHTTPBody(request: NSMutableURLRequest, parameters: [String : Any]?) {
         guard let parameters = parameters else { return }
 
         do {
