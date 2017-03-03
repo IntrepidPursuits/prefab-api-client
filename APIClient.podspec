@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 
   s.subspec "Core" do |cs|
     cs.source_files = "Source/APIClient/*.swift"
-    cs.dependency 'Intrepid', '~> 0.6.6'
+    cs.dependency 'Intrepid', '~> 0.7.0'
   end
 
   s.subspec "Genome" do |rx|
