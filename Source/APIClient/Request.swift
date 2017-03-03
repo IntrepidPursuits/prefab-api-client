@@ -19,6 +19,7 @@ public protocol Request {
     static var baseURL: String { get }
     static var acceptHeader: String? { get }
     static var authToken: String? { get }
+    static var authTokenHeader: String? { get }
 
     var method: HTTPMethod { get }
     var path: String { get }
@@ -41,8 +42,9 @@ public extension Request {
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
 
         if authenticated {
-            if let token = Self.authToken {
-                request.setValue("Token token=\(token)", forHTTPHeaderField: "Authorization")
+            if let token = Self.authToken, let tokenHeader = Self.authTokenHeader {
+                let authorizationKey = "\(tokenHeader)"+"\(token)"
+                request.setValue(authorizationKey, forHTTPHeaderField: "Authorization")
             } else {
                 print("Error: authenticated request missing token: %@", request)
             }
