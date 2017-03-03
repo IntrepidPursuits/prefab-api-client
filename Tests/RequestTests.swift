@@ -9,53 +9,6 @@
 import XCTest
 @testable import APIClient
 
-struct TestRequest: Request {
-
-    static var baseURL: String {
-        return "http://www.intrepid.io"
-    }
-
-    static var acceptHeader: String? {
-        return "application/json"
-    }
-
-    static var authorizationHeader: String? {
-        return "test-token"
-    }
-
-    var method: HTTPMethod {
-        return .GET
-    }
-
-    var path: String {
-        return "test"
-    }
-
-    var authenticated: Bool {
-        return true
-    }
-
-    var queryParameters: [String : Any]? {
-        return [
-            "param1" : "1",
-            "param2" : "2"
-        ]
-    }
-
-    var bodyParameters: [String : Any]? {
-        return [
-            "object" : [
-                "id" : "1",
-                "name" : "test"
-            ]
-        ]
-    }
-
-    var contentType: String {
-        return "application/json"
-    }
-}
-
 class RequestTests: XCTestCase {
 
     let testRequest = TestRequest()
@@ -94,6 +47,6 @@ class RequestTests: XCTestCase {
         let headers = sut.allHTTPHeaderFields
         XCTAssertEqual(headers?["Accept"], TestRequest.acceptHeader)
         XCTAssertEqual(headers?["Content-Type"], testRequest.contentType)
-        XCTAssertEqual(headers?["Authorization"], "\(TestRequest.authorizationHeader!)")
+        XCTAssertEqual(headers?["Authorization"], testRequest.credentialProvider.formattedToken)
     }
 }

@@ -20,6 +20,8 @@ open class APIClient {
 
     public let session: URLSession
 
+    public var authTokenRefresher: AuthTokenRefresher? = nil
+
     public init(session: URLSession = .shared) {
         self.session = session
     }
@@ -28,14 +30,21 @@ open class APIClient {
         let dataTask = session.dataTask(with: request, completionHandler: { [weak self] (data, response, error) in
             guard
                 let welf = self,
-                let completion = completion
+                let completion = completion,
+                let result  = welf.result(request: request, completion: completion, data: data, response: response, error: error)
             else { return }
-            completion(welf.result(data: data, response: response, error: error))
+            completion(result)
         })
         dataTask.resume()
     }
 
-    internal func result(data: Data?, response: URLResponse?, error: Error?) -> Result<Data?> {
+    internal func result(
+        request: URLRequest,
+        completion: ((Result<Data?>) -> Void)?,
+        data: Data?,
+        response: URLResponse?,
+        error: Error?) -> Result<Data?>? {
+
         if let error = error {
             return .failure(APIClientError.dataTaskError(error: error))
         }
@@ -45,9 +54,18 @@ open class APIClient {
         }
 
         let statusCode = httpResponse.statusCode
+        
         switch statusCode {
         case 200..<300:
             return .success(data)
+        case 401:
+            if let authTokenRefresher = authTokenRefresher {
+                authTokenRefresher.handleUnauthorizedRequest(request: request, completion: completion)
+                return nil
+            } else {
+                let error = APIClientError.httpError(statusCode: statusCode, response: httpResponse, data: data)
+                return .failure(error)
+            }
         default:
             let error = APIClientError.httpError(statusCode: statusCode, response: httpResponse, data: data)
             return .failure(error)

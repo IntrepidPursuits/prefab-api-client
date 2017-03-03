@@ -18,7 +18,6 @@ public enum HTTPMethod: String {
 public protocol Request {
     static var baseURL: String { get }
     static var acceptHeader: String? { get }
-    static var authorizationHeader: String? { get }
 
     var method: HTTPMethod { get }
     var path: String { get }
@@ -26,6 +25,7 @@ public protocol Request {
     var queryParameters: [String: Any]? { get }
     var bodyParameters: [String: Any]? { get }
     var contentType: String { get }
+    var credentialProvider: CredentialProviding? { get }
 }
 
 public extension Request {
@@ -41,11 +41,7 @@ public extension Request {
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
 
         if authenticated {
-            if let authorizationHeader = Self.authorizationHeader {
-                request.setValue(authorizationHeader, forHTTPHeaderField: "Authorization")
-            } else {
-                print("Error: authenticated request missing token: %@", request)
-            }
+            request.setValue(credentialProvider?.formattedToken, forHTTPHeaderField: "Authorization")
         }
 
         encodeQueryParameters(request: request, parameters: queryParameters)

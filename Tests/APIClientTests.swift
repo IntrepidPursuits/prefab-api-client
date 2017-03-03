@@ -14,6 +14,8 @@ import Genome
 class APIClientTests: XCTestCase {
 
     let testURL = URL(string: "intrepid.io")!
+    let testRequest = TestRequest().urlRequest
+
     var sut: APIClient!
 
     override func setUp() {
@@ -30,20 +32,20 @@ class APIClientTests: XCTestCase {
 
     func testDataTaskErrorResult() {
         let error = NSError()
-        let result = sut.result(data: nil, response: nil, error: error)
-        XCTAssert(result.isFailure)
+        let result = sut.result(request: testRequest, completion: nil, data: nil, response: nil, error: error)
+        XCTAssert(result!.isFailure)
     }
 
     func testSuccessResult() {
         let response = HTTPURLResponse(url: testURL, statusCode: 200, httpVersion: nil, headerFields: nil)
-        let result = sut.result(data: nil, response: response, error: nil)
-        XCTAssert(result.isSuccess)
+        let result = sut.result(request: testRequest, completion: nil, data: nil, response: response, error: nil)
+        XCTAssert(result!.isSuccess)
     }
 
     func testStatusCodeErrorResult() {
         let response = HTTPURLResponse(url: testURL, statusCode: 400, httpVersion: nil, headerFields: nil)
-        let result = sut.result(data: nil, response: response, error: nil)
-        XCTAssert(result.isFailure)
+        let result = sut.result(request: testRequest, completion: nil, data: nil, response: response, error: nil)
+        XCTAssert(result!.isFailure)
     }
 
     // MARK: - Genome
@@ -57,7 +59,7 @@ class APIClientTests: XCTestCase {
         let json = ["identifier" : "1", "name" : "test"]
         do {
             let data = try JSONSerialization.data(withJSONObject: json, options: [])
-            let success: Result<MockMappableObject> = sut.mappableObjectResult(dataResult: .success(data))
+            let success: Result<MockMappableObject> = sut.mappableObjectResult(keyPath: nil, dataResult: .success(data))
             let mappedObject = success.value
             XCTAssertEqual(mappedObject?.identifier, "1")
             XCTAssertEqual(mappedObject?.name, "test")
@@ -73,7 +75,7 @@ class APIClientTests: XCTestCase {
         ]
         do {
             let data = try JSONSerialization.data(withJSONObject: json, options: [])
-            let success: Result<[MockMappableObject]> = sut.mappableArrayResult(dataResult: .success(data))
+            let success: Result<[MockMappableObject]> = sut.mappableArrayResult(keyPath: nil, dataResult: .success(data))
             let array = success.value
             XCTAssertEqual(array?[0].identifier, "1")
             XCTAssertEqual(array?[0].name, "test")
@@ -82,15 +84,5 @@ class APIClientTests: XCTestCase {
         } catch {
             XCTFail("Unable to create or deserialize data")
         }
-    }
-}
-
-final class MockMappableObject: BasicMappable {
-    var identifier: String = ""
-    var name: String = ""
-
-    func sequence(_ map: Map) throws {
-        try identifier <~ map["identifier"]
-        try name <~ map["name"]
     }
 }

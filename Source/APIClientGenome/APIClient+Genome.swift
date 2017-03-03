@@ -34,16 +34,16 @@ public extension APIClient {
 
     // MARK: - Singular Result Type
 
-    public func sendRequest<T: MappableObject>(_ request: URLRequest, completion: ((Result<T>) -> Void)?) {
+    public func sendRequest<T: MappableObject>(_ request: URLRequest, keyPath: String? = nil, completion: ((Result<T>) -> Void)?) {
         let dataRequestCompletion: (Result<Data?>) -> Void = { dataResult in
             DispatchQueue.main.async{
-                completion?(self.mappableObjectResult(dataResult: dataResult))
+                completion?(self.mappableObjectResult(keyPath: keyPath, dataResult: dataResult))
             }
         }
         sendRequest(request, completion: dataRequestCompletion)
     }
 
-    internal func mappableObjectResult<T: MappableObject>(dataResult: Result<Data?>) -> Result<T> {
+    internal func mappableObjectResult<T: MappableObject>(keyPath: String?, dataResult: Result<Data?>) -> Result<T> {
         var result: Result<T>
 
         switch dataResult {
@@ -51,7 +51,11 @@ public extension APIClient {
             result = .failure(APIClientError.unableToMapResult)
             do {
                 if let node = try data?.makeNode() {
-                    result = try .success(T(node: node))
+                    if let keyPath = keyPath, let subNode = node[keyPath] {
+                        result = try .success(T(node: subNode))
+                    } else {
+                        result = try .success(T(node: node))
+                    }
                 }
             } catch {
                 print("Error creating and mapping node: \(error)")
@@ -65,16 +69,16 @@ public extension APIClient {
 
     // MARK: - Array Result Type
 
-    public func sendRequest<T: MappableObject>(_ request: URLRequest, completion: ((Result<[T]>) -> Void)?) {
+    public func sendRequest<T: MappableObject>(_ request: URLRequest, keyPath: String? = nil, completion: ((Result<[T]>) -> Void)?) {
         let dataRequestCompletion: (Result<Data?>) -> Void = { dataResult in
             DispatchQueue.main.async{
-                completion?(self.mappableArrayResult(dataResult: dataResult))
+                completion?(self.mappableArrayResult(keyPath: keyPath, dataResult: dataResult))
             }
         }
         sendRequest(request, completion: dataRequestCompletion)
     }
 
-    internal func mappableArrayResult<T: MappableObject>(dataResult: Result<Data?>) -> Result<[T]> {
+    internal func mappableArrayResult<T: MappableObject>(keyPath: String?, dataResult: Result<Data?>) -> Result<[T]> {
         var result: Result<[T]>
 
         switch dataResult {
@@ -84,8 +88,10 @@ public extension APIClient {
                 if let node = try data?.makeNode() {
                     if node.isNull {
                         result = .success([T]())
+                    } else if let keyPath = keyPath, let subNode = node[keyPath] {
+                        result = try .success([T](node: subNode))
                     } else {
-                        try result = .success([T](node: node))
+                        result = try .success([T](node: node))
                     }
                 }
             } catch {
