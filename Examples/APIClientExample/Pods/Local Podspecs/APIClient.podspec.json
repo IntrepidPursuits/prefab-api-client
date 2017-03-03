@@ -1,0 +1,46 @@
+{
+  "name": "APIClient",
+  "version": "0.0.1",
+  "summary": "Prefabricated networking layer for Intrepid.",
+  "description": "A lightweight networking layer providing success/failure handling and routing.\nOptional support for convenient interfacing with object mapping.",
+  "homepage": "https://github.com/IntrepidPursuits/prefab-api-client",
+  "license": "MIT",
+  "authors": {
+    "Mark Daigneault": "markd@intrepid.io"
+  },
+  "source": {
+    "git": "https://github.com/IntrepidPursuits/prefab-api-client.git",
+    "tag": "0.0.1"
+  },
+  "exclude_files": "tests/**/*",
+  "platforms": {
+    "ios": "9.0"
+  },
+  "pod_target_xcconfig": {
+    "SWIFT_VERSION": "3.0"
+  },
+  "default_subspecs": "Core",
+  "subspecs": [
+    {
+      "name": "Core",
+      "source_files": "Source/APIClient/*.swift",
+      "dependencies": {
+        "Intrepid": [
+          "~> 0.6.6"
+        ]
+      }
+    },
+    {
+      "name": "Genome",
+      "source_files": "Source/APIClientGenome/*.swift",
+      "dependencies": {
+        "Genome": [
+          "~> 3.0.0"
+        ],
+        "APIClient/Core": [
+
+        ]
+      }
+    }
+  ]
+}

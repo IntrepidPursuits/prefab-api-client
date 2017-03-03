@@ -39,6 +39,10 @@
 		5E54CFFB1E2E927100F3ABE1 /* APIClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = APIClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E54D0001E2E927100F3ABE1 /* APIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClientTests.swift; sourceTree = "<group>"; };
 		5E54D0021E2E927100F3ABE1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5EDDC44D1E69D87900584797 /* Genome.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Genome.framework; path = "../../Library/Developer/Xcode/DerivedData/APIClient-aubiaoakqafdsofzmotihgcvpzvp/Build/Products/Debug-iphonesimulator/Genome/Genome.framework"; sourceTree = "<group>"; };
+		5EDDC44E1E69D87900584797 /* Intrepid.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intrepid.framework; path = "../../Library/Developer/Xcode/DerivedData/APIClient-aubiaoakqafdsofzmotihgcvpzvp/Build/Products/Debug-iphonesimulator/Intrepid/Intrepid.framework"; sourceTree = "<group>"; };
+		5EDDC44F1E69D87900584797 /* IP_UIKit_Wisdom.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IP_UIKit_Wisdom.framework; path = "../../Library/Developer/Xcode/DerivedData/APIClient-aubiaoakqafdsofzmotihgcvpzvp/Build/Products/Debug-iphonesimulator/IP-UIKit-Wisdom/IP_UIKit_Wisdom.framework"; sourceTree = "<group>"; };
+		5EDDC4651E69D9B600584797 /* Pods_APIClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_APIClient.framework; path = "../../Library/Developer/Xcode/DerivedData/APIClient-aubiaoakqafdsofzmotihgcvpzvp/Build/Products/Debug-iphonesimulator/Pods_APIClient.framework"; sourceTree = "<group>"; };
 		5EF7831E1E687E010066FA24 /* RequestTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTests.swift; sourceTree = "<group>"; };
 		7D8D16CD3CDD9595245D801E /* Pods-APIClientTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APIClientTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-APIClientTests/Pods-APIClientTests.release.xcconfig"; sourceTree = "<group>"; };
 		DC836426EC10CC75E74ED961 /* Pods-APIClient.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APIClient.release.xcconfig"; path = "Pods/Target Support Files/Pods-APIClient/Pods-APIClient.release.xcconfig"; sourceTree = "<group>"; };
@@ -137,6 +141,10 @@
 		74D222312F3132A823DB0FE1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5EDDC4651E69D9B600584797 /* Pods_APIClient.framework */,
+				5EDDC44D1E69D87900584797 /* Genome.framework */,
+				5EDDC44E1E69D87900584797 /* Intrepid.framework */,
+				5EDDC44F1E69D87900584797 /* IP_UIKit_Wisdom.framework */,
 				17B24F0D96C0CDC515E696FD /* Pods_APIClient.framework */,
 				0F7D916833F4B0DF1AE4D3D1 /* Pods_APIClientTests.framework */,
 			);
@@ -226,6 +234,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 5E54CFE81E2E927100F3ABE1;
 			productRefGroup = 5E54CFF31E2E927100F3ABE1 /* Products */;
