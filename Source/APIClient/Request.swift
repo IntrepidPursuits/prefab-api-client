@@ -18,8 +18,7 @@ public enum HTTPMethod: String {
 public protocol Request {
     static var baseURL: String { get }
     static var acceptHeader: String? { get }
-    static var authToken: String? { get }
-    static var authTokenHeader: String? { get }
+    static var authorizationHeader: String? { get }
 
     var method: HTTPMethod { get }
     var path: String { get }
@@ -42,9 +41,8 @@ public extension Request {
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
 
         if authenticated {
-            if let token = Self.authToken, let tokenHeader = Self.authTokenHeader {
-                let authorizationKey = "\(tokenHeader)"+"\(token)"
-                request.setValue(authorizationKey, forHTTPHeaderField: "Authorization")
+            if let authorizationHeader = Self.authorizationHeader {
+                request.setValue(authorizationHeader, forHTTPHeaderField: "Authorization")
             } else {
                 print("Error: authenticated request missing token: %@", request)
             }

@@ -19,12 +19,8 @@ struct TestRequest: Request {
         return "application/json"
     }
 
-    static var authToken: String? {
+    static var authorizationHeader: String? {
         return "test-token"
-    }
-
-    static var authTokenHeader: String? {
-        return ""
     }
 
     var method: HTTPMethod {
@@ -98,6 +94,6 @@ class RequestTests: XCTestCase {
         let headers = sut.allHTTPHeaderFields
         XCTAssertEqual(headers?["Accept"], TestRequest.acceptHeader)
         XCTAssertEqual(headers?["Content-Type"], testRequest.contentType)
-        XCTAssertEqual(headers?["Authorization"], "\(TestRequest.authTokenHeader!)\(TestRequest.authToken!)")
+        XCTAssertEqual(headers?["Authorization"], "\(TestRequest.authorizationHeader!)")
     }
 }
