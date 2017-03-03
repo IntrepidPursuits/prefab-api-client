@@ -98,6 +98,6 @@ class RequestTests: XCTestCase {
         let headers = sut.allHTTPHeaderFields
         XCTAssertEqual(headers?["Accept"], TestRequest.acceptHeader)
         XCTAssertEqual(headers?["Content-Type"], testRequest.contentType)
-        XCTAssertEqual(headers?["Authorization"], "\(TestRequest.authTokenHeader!)"+"\(TestRequest.authToken!)")
+        XCTAssertEqual(headers?["Authorization"], "\(TestRequest.authTokenHeader!)\(TestRequest.authToken!)")
     }
 }
