@@ -512,7 +512,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EE91157109E5FD971BC09B5B /* Pods-APIClientTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = THP5EV5EJ9;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -526,7 +525,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7D8D16CD3CDD9595245D801E /* Pods-APIClientTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = THP5EV5EJ9;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
