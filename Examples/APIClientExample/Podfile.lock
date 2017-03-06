@@ -1,0 +1,39 @@
+PODS:
+  - APIClient/Core (0.0.1):
+    - Intrepid (~> 0.6.6)
+  - APIClient/Genome (0.0.1):
+    - APIClient/Core
+    - Genome (~> 3.0.0)
+  - Genome (3.0.2):
+    - Genome/Default (= 3.0.2)
+  - Genome/Core (3.0.2):
+    - Genome/Packages
+  - Genome/Default (3.0.2):
+    - Genome/Core
+    - Genome/Foundation
+  - Genome/Foundation (3.0.2):
+    - Genome/Core
+  - Genome/Packages (3.0.2)
+  - Intrepid (0.6.6):
+    - Intrepid/Core (= 0.6.6)
+  - Intrepid/Core (0.6.6):
+    - IP-UIKit-Wisdom (= 0.0.9)
+  - IP-UIKit-Wisdom (0.0.9)
+
+DEPENDENCIES:
+  - APIClient/Core (from `../../`)
+  - APIClient/Genome (from `../../`)
+
+EXTERNAL SOURCES:
+  APIClient:
+    :path: ../../
+
+SPEC CHECKSUMS:
+  APIClient: a955e1e22d7152f5dbea9588c86ff5aa14050c1c
+  Genome: 44584c1e971899a5a4b20ee87faee452a5f1ac1a
+  Intrepid: b5e7cba2e2ab29a03f4195bb13f2d7f9a516c2e0
+  IP-UIKit-Wisdom: cd9838571e97427a0c61c05d856eaaca9afd7c1a
+
+PODFILE CHECKSUM: f762d8ce21abae7cf596203251c43c99683ad6fd
+
+COCOAPODS: 1.2.0
