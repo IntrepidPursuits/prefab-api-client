@@ -62,4 +62,9 @@ class AuthenticationTests: XCTestCase {
         }
     }
 
+    func testCredentialProviderAuthorizedRequest() {
+        var testRequest = TestRequest().urlRequest
+        credentialProvider.authorizeRequest(&testRequest)
+        XCTAssertEqual(testRequest.value(forHTTPHeaderField: "Authorization"), credentialProvider.formattedToken)
+    }
 }
