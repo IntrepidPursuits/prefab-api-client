@@ -34,23 +34,23 @@ public extension Request {
         let baseURL = Foundation.URL(string: Self.baseURL)!
         let url = Foundation.URL(string: path, relativeTo: baseURL) ?? baseURL
 
-        let request = NSMutableURLRequest(url: url)
+        var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
 
         request.setValue(Self.acceptHeader, forHTTPHeaderField: "Accept")
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
 
         if authenticated {
-            request.setValue(credentialProvider?.formattedToken, forHTTPHeaderField: "Authorization")
+            credentialProvider?.authorizeRequest(&request)
         }
 
-        encodeQueryParameters(request: request, parameters: queryParameters)
-        encodeHTTPBody(request: request, parameters: bodyParameters)
+        encodeQueryParameters(request: &request, parameters: queryParameters)
+        encodeHTTPBody(request: &request, parameters: bodyParameters)
 
         return request as URLRequest
     }
 
-    private func encodeQueryParameters(request: NSMutableURLRequest, parameters: [String : Any]?) {
+    private func encodeQueryParameters(request: inout URLRequest, parameters: [String : Any]?) {
         guard let url = request.url,
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let stringParameters = parameters as? [String : String]
@@ -68,7 +68,7 @@ public extension Request {
         request.url = components.url
     }
 
-    private func encodeHTTPBody(request: NSMutableURLRequest, parameters: [String : Any]?) {
+    private func encodeHTTPBody(request: inout URLRequest, parameters: [String : Any]?) {
         guard let parameters = parameters else { return }
 
         do {

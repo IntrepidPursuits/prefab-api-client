@@ -21,6 +21,12 @@ public protocol CredentialProviding {
     var formattedToken: String? { get }
 }
 
+public extension CredentialProviding {
+    func authorizeRequest(_ request: inout URLRequest) {
+        request.setValue(formattedToken, forHTTPHeaderField: "Authorization")
+    }
+}
+
 public enum AuthTokenRefreshError: Error {
     case MissingCredentials
     case AuthenticationError(Error)
@@ -48,15 +54,15 @@ public class AuthTokenRefresher {
         }
 
         authClient.login(email: email, password: password) { [weak self] result in
-            guard let welf = self else { return }
             switch result {
             case .success(let token):
-                welf.credentialProvider.token = token
                 var mutableRequest = request
-                mutableRequest.setValue(welf.credentialProvider.formattedToken, forHTTPHeaderField: "Authorization")
-                welf.apiClient.sendRequest(mutableRequest, completion: completion)
+
+                self?.credentialProvider.token = token
+                self?.credentialProvider.authorizeRequest(&mutableRequest)
+                self?.apiClient.sendRequest(mutableRequest, completion: completion)
             case .failure(let error):
-                welf.credentialProvider.token = nil
+                self?.credentialProvider.token = nil
                 completion?(.failure(AuthTokenRefreshError.AuthenticationError(error)))
             }
         }

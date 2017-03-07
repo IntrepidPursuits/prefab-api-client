@@ -51,7 +51,7 @@ struct TestRequest: Request {
         return "application/json"
     }
 
-    var credentialProvider: CredentialProviding {
+    var credentialProvider: CredentialProviding? {
         return MockCredentialProvider()
     }
 }
