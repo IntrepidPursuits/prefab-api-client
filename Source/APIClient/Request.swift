@@ -18,7 +18,6 @@ public enum HTTPMethod: String {
 public protocol Request {
     static var baseURL: String { get }
     static var acceptHeader: String? { get }
-    static var authorizationHeader: String? { get }
 
     var method: HTTPMethod { get }
     var path: String { get }
@@ -26,6 +25,7 @@ public protocol Request {
     var queryParameters: [String: Any]? { get }
     var bodyParameters: [String: Any]? { get }
     var contentType: String { get }
+    var credentialProvider: CredentialProviding? { get }
 }
 
 public extension Request {
@@ -34,27 +34,23 @@ public extension Request {
         let baseURL = Foundation.URL(string: Self.baseURL)!
         let url = Foundation.URL(string: path, relativeTo: baseURL) ?? baseURL
 
-        let request = NSMutableURLRequest(url: url)
+        var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
 
         request.setValue(Self.acceptHeader, forHTTPHeaderField: "Accept")
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
 
         if authenticated {
-            if let authorizationHeader = Self.authorizationHeader {
-                request.setValue(authorizationHeader, forHTTPHeaderField: "Authorization")
-            } else {
-                print("Error: authenticated request missing token: %@", request)
-            }
+            credentialProvider?.authorizeRequest(&request)
         }
 
-        encodeQueryParameters(request: request, parameters: queryParameters)
-        encodeHTTPBody(request: request, parameters: bodyParameters)
+        encodeQueryParameters(request: &request, parameters: queryParameters)
+        encodeHTTPBody(request: &request, parameters: bodyParameters)
 
         return request as URLRequest
     }
 
-    private func encodeQueryParameters(request: NSMutableURLRequest, parameters: [String : Any]?) {
+    private func encodeQueryParameters(request: inout URLRequest, parameters: [String : Any]?) {
         guard let url = request.url,
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let stringParameters = parameters as? [String : String]
@@ -72,7 +68,7 @@ public extension Request {
         request.url = components.url
     }
 
-    private func encodeHTTPBody(request: NSMutableURLRequest, parameters: [String : Any]?) {
+    private func encodeHTTPBody(request: inout URLRequest, parameters: [String : Any]?) {
         guard let parameters = parameters else { return }
 
         do {
