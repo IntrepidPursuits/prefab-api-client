@@ -15,9 +15,28 @@ public enum HTTPMethod: String {
     case DELETE
 }
 
+public struct MediaType {
+    public static let json = "application/json"
+    public static let javascript = "application/javascript"
+    public static let xml = "application/xml"
+    public static let zip = "application/zip"
+    public static let urlEncodedForm = "application/x-www-form-urlencoded"
+    public static let multipartForm = "multipart/form-data"
+    public static let png = "image/png"
+    public static let jpeg = "image/jpeg"
+    public static let gif = "image/gif"
+    public static let mpeg = "audio/mpeg"
+    public static let vorbis = "audio/vorbis"
+    public static let css = "text/css"
+    public static let html = "text/html"
+    public static let plainText = "text/plain"
+}
+
 public protocol Request {
     static var baseURL: String { get }
     static var acceptHeader: String? { get }
+    static var boundary: String? { get }
+    static var credentialProvider: CredentialProviding? { get }
 
     var method: HTTPMethod { get }
     var path: String { get }
@@ -25,10 +44,19 @@ public protocol Request {
     var queryParameters: [String: Any]? { get }
     var bodyParameters: [String: Any]? { get }
     var contentType: String { get }
-    var credentialProvider: CredentialProviding? { get }
+    var contentHeader: String { get }
 }
 
 public extension Request {
+
+    var contentHeader: String {
+        switch contentType {
+        case MediaType.multipartForm:
+            return "multipart/form-data; boundary=\(Self.boundary)"
+        default:
+            return contentType
+        }
+    }
 
     var urlRequest: URLRequest {
         let baseURL = Foundation.URL(string: Self.baseURL)!
@@ -38,10 +66,10 @@ public extension Request {
         request.httpMethod = method.rawValue
 
         request.setValue(Self.acceptHeader, forHTTPHeaderField: "Accept")
-        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
+        request.setValue(contentHeader, forHTTPHeaderField: "Content-Type")
 
         if authenticated {
-            credentialProvider?.authorizeRequest(&request)
+            Self.credentialProvider?.authorizeRequest(&request)
         }
 
         encodeQueryParameters(request: &request, parameters: queryParameters)
@@ -71,11 +99,41 @@ public extension Request {
     private func encodeHTTPBody(request: inout URLRequest, parameters: [String : Any]?) {
         guard let parameters = parameters else { return }
 
+        if contentType == MediaType.multipartForm {
+            let data = formData(parameters: parameters)
+            request.httpBody = data
+
+            return
+        }
+
         do {
             let data = try JSONSerialization.data(withJSONObject: parameters, options: [])
             request.httpBody = data
         } catch {
             print("Error creating JSON paramters")
         }
+
     }
+
+    private func formData(parameters: [String : Any]) -> Data {
+        var body = Data()
+
+        parameters.forEach {
+            if $0.key == "image" {
+                body.append("--\(Self.boundary)\r\n")
+                body.append("Content-Disposition: form-data; name=\"\($0.key)\"; filename=\"myimage.png\"\r\n\r\n")
+                body.append("\($0.value)\r\n")
+
+            } else {
+                body.append("--\(Self.boundary)\r\n")
+                body.append("Content-Disposition: form-data; name=\"\($0.key)\"\r\n\r\n")
+                body.append("\($0.value)\r\n")
+            }
+        }
+        
+        body.append("--\(Self.boundary)--\r\n")
+        
+        return body
+    }
+    
 }
