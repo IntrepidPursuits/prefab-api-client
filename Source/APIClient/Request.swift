@@ -119,20 +119,26 @@ public extension Request {
         var body = Data()
 
         parameters.forEach {
-            if $0.key == "image" {
-                body.append("--\(Self.boundary)\r\n")
-                body.append("Content-Disposition: form-data; name=\"\($0.key)\"; filename=\"myimage.png\"\r\n\r\n")
-                body.append("\($0.value)\r\n")
 
-            } else {
-                body.append("--\(Self.boundary)\r\n")
-                body.append("Content-Disposition: form-data; name=\"\($0.key)\"\r\n\r\n")
-                body.append("\($0.value)\r\n")
+            body.append("--\(Self.boundary)\r\n")
+            body.append("Content-Disposition: form-data; name=\"\($0.key)\"")
+
+            if let tuple = $0.value as? (String, Data) {
+                body.append("; filename=\"\(tuple.0)\"")
             }
+
+            body.append("\r\n\r\n")
+
+            if let tuple = $0.value as? (String, Data) {
+                body.append(tuple.1 as! Data)
+            } else {
+                body.append("\($0.value)")
+            }
+
+            body.append("\r\n")
+            body.append("--\(Self.boundary)--\r\n")
         }
-        
-        body.append("--\(Self.boundary)--\r\n")
-        
+
         return body
     }
     
