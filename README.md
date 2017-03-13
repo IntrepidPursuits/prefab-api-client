@@ -1,10 +1,8 @@
 # APIClient
 
-<!--
-[![Build Status](https://ci.intrepid.io/buildStatus/icon?job=ios-template)](https://ci.intrepid.io/job/ios-template/)
-[![Coverage](http://ci.intrepid.io:9913/jenkins/cobertura/ios-template/)](https://ci.intrepid.io/job/ios-template/cobertura/)
+[![Build Status](https://ci.intrepid.io/buildStatus/icon?job=api-client-ios)](https://ci.intrepid.io/job/api-client-ios/)
+[![Coverage](http://ci.intrepid.io:9913/jenkins/cobertura/api-client-ios/)](https://ci.intrepid.io/job/api-client-ios/cobertura/)
 
--->
 The purpose of this library is to provide a pre-fabricated solution for the
 networking layer of an iOS app.
 ___
