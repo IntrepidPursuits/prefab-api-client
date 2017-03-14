@@ -34,7 +34,7 @@ public enum AuthTokenRefreshError: Error {
 
 public class AuthTokenRefresher {
 
-    let apiClient: APIClient
+    weak var apiClient: APIClient?  // APIClient has a strong reference to AuthTokenRefresher
     let authClient: AuthClient
     var credentialProvider: CredentialProviding
 
@@ -46,6 +46,7 @@ public class AuthTokenRefresher {
 
     func handleUnauthorizedRequest(request: URLRequest, completion: ((Result<Data?>) -> Void)?) {
         guard
+            let apiClient = apiClient,
             let email = credentialProvider.email,
             let password = credentialProvider.password
         else {
@@ -60,7 +61,7 @@ public class AuthTokenRefresher {
 
                 self?.credentialProvider.token = token
                 self?.credentialProvider.authorizeRequest(&mutableRequest)
-                self?.apiClient.sendRequest(mutableRequest, completion: completion)
+                apiClient.sendRequest(mutableRequest, completion: completion)
             case .failure(let error):
                 self?.credentialProvider.token = nil
                 completion?(.failure(AuthTokenRefreshError.AuthenticationError(error)))

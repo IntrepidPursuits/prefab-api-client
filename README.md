@@ -1,10 +1,8 @@
 # APIClient
 
-<!--
-[![Build Status](https://ci.intrepid.io/buildStatus/icon?job=ios-template)](https://ci.intrepid.io/job/ios-template/)
-[![Coverage](http://ci.intrepid.io:9913/jenkins/cobertura/ios-template/)](https://ci.intrepid.io/job/ios-template/cobertura/)
+[![Build Status](https://ci.intrepid.io/buildStatus/icon?job=api-client-ios)](https://ci.intrepid.io/job/api-client-ios/)
+[![Coverage](http://ci.intrepid.io:9913/jenkins/cobertura/api-client-ios/)](https://ci.intrepid.io/job/api-client-ios/cobertura/)
 
--->
 The purpose of this library is to provide a pre-fabricated solution for the
 networking layer of an iOS app.
 ___
@@ -58,6 +56,13 @@ A `Genome`-specific subspec is also available, adding mapping capabilities to th
 The library also provides an interface for a request builder object, where application-specific endpoints will be implemented. This interface, which takes the form of a protocol called `Request`, exposes the various components of a `URLRequest` object, including URL, HTTP method, header values and body data. An extension of `Request` also implements a factory method for creating a `URLRequest` object based on the provided component values.
 
 Usage of the protocol is left entirely up to the user, and possible implementations are widely varied. One potential pattern would be to use an `enum` type that conforms to `Request`, with cases representing individual endpoints, similar to the [AlamoFire Router pattern](https://github.com/Alamofire/Alamofire#routing-requests).
+
+## Authentication
+`APIClient` provides an out-of-the-box solution for handling expired/invalid tokens for authenticated requests. The `AuthTokenRefresher` class is responsible for handling these failed requests and has the ability sign in, refresh the token, configure the original request with the new token, and retry that request. Several protocols must be adopted by types in the user's application in order to enable token refresh functionality.
+- `AuthClient`: Client object that exposes login function
+- `CredentialProviding`: Object that stores saved user credentials and auth token, and also knows how to configure requests with that token
+
+Additionally, the instance of `AuthTokenRefresher` must be created by the user with references to an `APIClient`, `AuthClient` and `CredentialProviding`. The appropriate instance of `APIClient` must then be configured with the resulting refresher object.
 
 ## Third Party Libraries
 - Intrepid SwiftWisdom
