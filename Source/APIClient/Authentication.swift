@@ -9,62 +9,62 @@
 import Foundation
 import Intrepid
 
-public protocol AuthClient {
-    func login(email: String, password: String, completion: ((Result<String>) -> Void)?)
+public protocol LoginClientDelegate: class {
+    func loginClient(_ client: LoginClient, didFinishLoginWithResult result: Result<AccessCredentials>)
+    func loginClientDidDisconnect(_ client: LoginClient)
 }
 
-public protocol CredentialProviding {
-    var email: String? { get set }
-    var password: String? { get set }
-    var token: String? { get set }
+public protocol LoginClient {
+    var delegate: LoginClientDelegate? { get set }
 
-    var formattedToken: String? { get }
+    func login()
+    func logout()
+
+    func refreshLogin(completion: ((Result<AccessCredentials>) -> Void)?)
 }
 
-public extension CredentialProviding {
-    func authorizeRequest(_ request: inout URLRequest) {
-        request.setValue(formattedToken, forHTTPHeaderField: "Authorization")
-    }
+public protocol LoginCredentials {
+    func httpBodyParameters() -> [String: Any]
 }
 
-public enum AuthTokenRefreshError: Error {
+public protocol AccessCredentials {
+    func authorize(_ request: inout URLRequest)
+}
+
+public protocol AccessCredentialProviding {
+    var accessCredentials: AccessCredentials? { get set }
+}
+
+public enum AccessCredentialsRefresherError: Error {
     case MissingCredentials
     case AuthenticationError(Error)
 }
 
-public class AuthTokenRefresher {
+public class AccessCredentialsRefresher {
 
-    weak var apiClient: APIClient?  // APIClient has a strong reference to AuthTokenRefresher
-    let authClient: AuthClient
-    var credentialProvider: CredentialProviding
+    let apiClient: APIClient
+    let loginClient: LoginClient
+    var accessCredentialsProvider: AccessCredentialProviding
 
-    init(apiClient: APIClient, authClient: AuthClient, credentialProvider: CredentialProviding) {
+    public init(apiClient: APIClient, loginClient: LoginClient, accessCredentialsProvider: AccessCredentialProviding) {
         self.apiClient = apiClient
-        self.authClient = authClient
-        self.credentialProvider = credentialProvider
+        self.loginClient = loginClient
+        self.accessCredentialsProvider = accessCredentialsProvider
     }
 
     func handleUnauthorizedRequest(request: URLRequest, completion: ((Result<Data?>) -> Void)?) {
-        guard
-            let apiClient = apiClient,
-            let email = credentialProvider.email,
-            let password = credentialProvider.password
-        else {
-            completion?(.failure(AuthTokenRefreshError.MissingCredentials))
-            return
-        }
-
-        authClient.login(email: email, password: password) { [weak self] result in
+        loginClient.refreshLogin { [weak self] result in
             switch result {
-            case .success(let token):
+            case .success(let accessCredentials):
                 var mutableRequest = request
 
-                self?.credentialProvider.token = token
-                self?.credentialProvider.authorizeRequest(&mutableRequest)
-                apiClient.sendRequest(mutableRequest, completion: completion)
+                self?.accessCredentialsProvider.accessCredentials = accessCredentials
+
+                accessCredentials.authorize(&mutableRequest)
+                self?.apiClient.sendRequest(mutableRequest, completion: completion)
             case .failure(let error):
-                self?.credentialProvider.token = nil
-                completion?(.failure(AuthTokenRefreshError.AuthenticationError(error)))
+                self?.accessCredentialsProvider.accessCredentials = nil
+                completion?(.failure(AccessCredentialsRefresherError.AuthenticationError(error)))
             }
         }
     }
