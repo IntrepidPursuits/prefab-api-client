@@ -73,12 +73,17 @@ public extension Request {
         }
 
         encodeQueryParameters(request: &request, parameters: queryParameters)
-        encodeHTTPBody(request: &request, parameters: bodyParameters)
+
+        if let form = self as? MultipartFormRequest {
+            form.encodeFormBody(request: &request)
+        } else {
+            encodeHTTPBody(request: &request, parameters: bodyParameters)
+        }
 
         return request as URLRequest
     }
 
-    private func encodeQueryParameters(request: inout URLRequest, parameters: [String : Any]?) {
+    func encodeQueryParameters(request: inout URLRequest, parameters: [String : Any]?) {
         guard let url = request.url,
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let stringParameters = parameters as? [String : String]
@@ -96,50 +101,47 @@ public extension Request {
         request.url = components.url
     }
 
-    private func encodeHTTPBody(request: inout URLRequest, parameters: [String : Any]?) {
+    func encodeHTTPBody(request: inout URLRequest, parameters: [String : Any]?) {
         guard let parameters = parameters else { return }
-
-        if contentType == MediaType.multipartForm {
-            let data = formData(parameters: parameters)
-            request.httpBody = data
-
-            return
-        }
-
+        
         do {
             let data = try JSONSerialization.data(withJSONObject: parameters, options: [])
             request.httpBody = data
         } catch {
             print("Error creating JSON paramters")
         }
-
     }
+}
 
-    private func formData(parameters: [String : Any]) -> Data {
+public protocol MultipartFormRequest: Request {
+    var unnamedBodyParameters: [String: Any] { get }
+    var formDataParameters: [String: Any] { get }
+    func encodeFormBody(request: inout URLRequest)
+}
+
+public extension MultipartFormRequest {
+
+    func encodeFormBody(request: inout URLRequest) {
         var body = Data()
 
-        parameters.forEach {
-
+        unnamedBodyParameters.forEach {
             body.append("--\(Self.boundary)\r\n")
             body.append("Content-Disposition: form-data; name=\"\($0.key)\"")
-
-            if let tuple = $0.value as? (String, Data) {
-                body.append("; filename=\"\(tuple.0)\"")
-            }
-
             body.append("\r\n\r\n")
-
-            if let tuple = $0.value as? (String, Data) {
-                body.append(tuple.1 as! Data)
-            } else {
-                body.append("\($0.value)")
-            }
-
+            body.append("\($0.value)")
             body.append("\r\n")
             body.append("--\(Self.boundary)--\r\n")
         }
 
-        return body
+        formDataParameters.forEach {
+            body.append("--\(Self.boundary)\r\n")
+            body.append("Content-Disposition: form-data; name=\"\($0.key)\"")
+            body.append("; filename=\"SomeImage\"")
+            body.append($0.value as! Data)
+            body.append("\r\n")
+            body.append("--\(Self.boundary)--\r\n")
+        }
+
+        request.httpBody = body
     }
-    
 }
