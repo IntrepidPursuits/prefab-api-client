@@ -45,7 +45,7 @@ public extension MultipartFormRequest {
             body.append("\r\n")
             body.append("Content-Type: \($0.value.mediaType)")
             body.append("\r\n\r\n")
-            body.append($0.value.data as! Data)
+            body.append($0.value.data)
             body.append("\r\n")
             body.append("--\(Self.boundary)--\r\n")
         }

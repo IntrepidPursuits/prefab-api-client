@@ -48,10 +48,10 @@ struct TestRequest: Request {
     }
 
     var contentType: String {
-        return "application/json"
+        return MediaType.json.rawValue
     }
 
-    var credentialProvider: CredentialProviding? {
+    static var credentialProvider: CredentialProviding? {
         return MockCredentialProvider()
     }
 }
