@@ -35,7 +35,6 @@ public struct MediaType {
 public protocol Request {
     static var baseURL: String { get }
     static var acceptHeader: String? { get }
-    static var boundary: String? { get }
     static var credentialProvider: CredentialProviding? { get }
 
     var method: HTTPMethod { get }
@@ -44,19 +43,9 @@ public protocol Request {
     var queryParameters: [String: Any]? { get }
     var bodyParameters: [String: Any]? { get }
     var contentType: String { get }
-    var contentHeader: String { get }
 }
 
 public extension Request {
-
-    var contentHeader: String {
-        switch contentType {
-        case MediaType.multipartForm:
-            return "multipart/form-data; boundary=\(Self.boundary)"
-        default:
-            return contentType
-        }
-    }
 
     var urlRequest: URLRequest {
         let baseURL = Foundation.URL(string: Self.baseURL)!
@@ -66,7 +55,7 @@ public extension Request {
         request.httpMethod = method.rawValue
 
         request.setValue(Self.acceptHeader, forHTTPHeaderField: "Accept")
-        request.setValue(contentHeader, forHTTPHeaderField: "Content-Type")
+        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
 
         if authenticated {
             Self.credentialProvider?.authorizeRequest(&request)
@@ -114,17 +103,23 @@ public extension Request {
 }
 
 public protocol MultipartFormRequest: Request {
-    var unnamedBodyParameters: [String: Any] { get }
-    var formDataParameters: [String: Any] { get }
+    // Boundary can't have a default value defined in extension or else it will be re-generated each time it's called.
+    static var boundary: String { get }
+    var unnamedBodyParameters: [String: Any]? { get }
+    var formDataParameters: [String: Any]? { get }
     func encodeFormBody(request: inout URLRequest)
 }
 
 public extension MultipartFormRequest {
 
+    var contentType: String {
+        return "multipart/form-data; boundary=\(Self.boundary)"
+    }
+
     func encodeFormBody(request: inout URLRequest) {
         var body = Data()
 
-        unnamedBodyParameters.forEach {
+        unnamedBodyParameters?.forEach {
             body.append("--\(Self.boundary)\r\n")
             body.append("Content-Disposition: form-data; name=\"\($0.key)\"")
             body.append("\r\n\r\n")
@@ -133,15 +128,22 @@ public extension MultipartFormRequest {
             body.append("--\(Self.boundary)--\r\n")
         }
 
-        formDataParameters.forEach {
+        formDataParameters?.forEach {
             body.append("--\(Self.boundary)\r\n")
             body.append("Content-Disposition: form-data; name=\"\($0.key)\"")
-            body.append("; filename=\"SomeImage\"")
+            // User-specified filename would go in line below.
+            body.append("; filename=\"untitled\"")
+            // Following two lines would add MIME type for each param
+            //            body.append("\r\n")
+            //            body.append("Content-Type: image/png")
+            body.append("\r\n\r\n")
             body.append($0.value as! Data)
             body.append("\r\n")
             body.append("--\(Self.boundary)--\r\n")
         }
 
         request.httpBody = body
+
+        // Create type that wraps data params so that we can provide MIME type and filename?
     }
 }
