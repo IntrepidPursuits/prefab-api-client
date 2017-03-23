@@ -14,7 +14,7 @@ public protocol MultipartFormRequest: Request {
     static var boundary: String { get }
 
     var unnamedBodyParameters: [String: Any]? { get }
-    var formDataParameters: [String: Any]? { get }
+    var formDataParameters: [String: FormParameter]? { get }
 
     func encodeFormBody(request: inout URLRequest)
 }
@@ -38,22 +38,30 @@ public extension MultipartFormRequest {
             body.append("--\(Self.boundary)--\r\n")
         }
 
-        // Create type that wraps data params below so that we can provide MIME type and filename?
-
         formDataParameters?.forEach {
             body.append("--\(Self.boundary)\r\n")
             body.append("Content-Disposition: form-data; name=\"\($0.key)\"")
-            // User-specified filename would go in line below.
-            body.append("; filename=\"untitled\"")
-            // Following two lines would add MIME type for each param
-            //            body.append("\r\n")
-            //            body.append("Content-Type: image/png")
+            body.append("; filename=\"\($0.value.filename)\"")
+            body.append("\r\n")
+            body.append("Content-Type: \($0.value.mediaType)")
             body.append("\r\n\r\n")
-            body.append($0.value as! Data)
+            body.append($0.value.data as! Data)
             body.append("\r\n")
             body.append("--\(Self.boundary)--\r\n")
         }
 
         request.httpBody = body
+    }
+}
+
+public struct FormParameter {
+    public let filename: String
+    public let mediaType: String
+    public let data: Data
+
+    public init(filename: String, mediaType: String, data: Data) {
+        self.filename = filename
+        self.mediaType = mediaType
+        self.data = data
     }
 }

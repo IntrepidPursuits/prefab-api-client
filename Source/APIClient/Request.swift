@@ -15,21 +15,21 @@ public enum HTTPMethod: String {
     case DELETE
 }
 
-public struct MediaType {
-    public static let json = "application/json"
-    public static let javascript = "application/javascript"
-    public static let xml = "application/xml"
-    public static let zip = "application/zip"
-    public static let urlEncodedForm = "application/x-www-form-urlencoded"
-    public static let multipartForm = "multipart/form-data"
-    public static let png = "image/png"
-    public static let jpeg = "image/jpeg"
-    public static let gif = "image/gif"
-    public static let mpeg = "audio/mpeg"
-    public static let vorbis = "audio/vorbis"
-    public static let css = "text/css"
-    public static let html = "text/html"
-    public static let plainText = "text/plain"
+public enum MediaType: String {
+    case json = "application/json"
+    case javascript = "application/javascript"
+    case xml = "application/xml"
+    case zip = "application/zip"
+    case urlEncodedForm = "application/x-www-form-urlencoded"
+    case multipartForm = "multipart/form-data"
+    case png = "image/png"
+    case jpeg = "image/jpeg"
+    case gif = "image/gif"
+    case mpeg = "audio/mpeg"
+    case vorbis = "audio/vorbis"
+    case css = "text/css"
+    case html = "text/html"
+    case plainText = "text/plain"
 }
 
 public protocol Request {
@@ -42,6 +42,7 @@ public protocol Request {
     var authenticated: Bool { get }
     var queryParameters: [String: Any]? { get }
     var bodyParameters: [String: Any]? { get }
+    // Should content type be string or MediaType? Making it MediaType means being locked into one our cases.
     var contentType: String { get }
 }
 
@@ -63,6 +64,8 @@ public extension Request {
 
         encodeQueryParameters(request: &request, parameters: queryParameters)
 
+        // If we want MutltipartFormRequest to inherit urlRequest behavior from Request, then optional casting like below
+        // is the only way I got it to work consistently.
         if let form = self as? MultipartFormRequest {
             form.encodeFormBody(request: &request)
         } else {
