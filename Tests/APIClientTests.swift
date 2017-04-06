@@ -59,10 +59,49 @@ class APIClientTests: XCTestCase {
         let json = ["identifier" : "1", "name" : "test"]
         do {
             let data = try JSONSerialization.data(withJSONObject: json, options: [])
-            let success: Result<MockMappableObject> = sut.mappableObjectResult(keyPath: nil, dataResult: .success(data))
+            let success: Result<MockMappableObject> = sut.nodeInitializableResult(keyPath: nil, dataResult: .success(data))
             let mappedObject = success.value
             XCTAssertEqual(mappedObject?.identifier, "1")
             XCTAssertEqual(mappedObject?.name, "test")
+        } catch {
+            XCTFail("Unable to create or deserialize data")
+        }
+    }
+
+    func testSingularStringResult() {
+        let key = "string"
+        let value = "some string"
+        let json = [key : value]
+        do {
+            let data = try JSONSerialization.data(withJSONObject: json, options: [])
+            let success: Result<String> = sut.nodeInitializableResult(keyPath: key, dataResult: .success(data))
+            XCTAssertEqual(success.value, value)
+        } catch {
+            XCTFail("Unable to create or deserialize data")
+        }
+    }
+
+    func testSingularNumberResult() {
+        let key = "number"
+        let value = 1.5
+        let json = [key : value]
+        do {
+            let data = try JSONSerialization.data(withJSONObject: json, options: [])
+            let success: Result<Double> = sut.nodeInitializableResult(keyPath: key, dataResult: .success(data))
+            XCTAssertEqual(success.value, value)
+        } catch {
+            XCTFail("Unable to create or deserialize data")
+        }
+    }
+
+    func testSingularBoolResult() {
+        let key = "bool"
+        let value = true
+        let json = [key : value]
+        do {
+            let data = try JSONSerialization.data(withJSONObject: json, options: [])
+            let success: Result<Bool> = sut.nodeInitializableResult(keyPath: key, dataResult: .success(data))
+            XCTAssertEqual(success.value, value)
         } catch {
             XCTFail("Unable to create or deserialize data")
         }
@@ -75,7 +114,7 @@ class APIClientTests: XCTestCase {
         ]
         do {
             let data = try JSONSerialization.data(withJSONObject: json, options: [])
-            let success: Result<[MockMappableObject]> = sut.mappableArrayResult(keyPath: nil, dataResult: .success(data))
+            let success: Result<[MockMappableObject]> = sut.nodeInitializableArrayResult(keyPath: nil, dataResult: .success(data))
             let array = success.value
             XCTAssertEqual(array?[0].identifier, "1")
             XCTAssertEqual(array?[0].name, "test")
