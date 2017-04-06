@@ -9,7 +9,7 @@
 import Foundation
 import Intrepid
 
-enum APIClientError: Error {
+public enum APIClientError: Error {
     case httpError(statusCode: Int, response: HTTPURLResponse, data: Data?)
     case dataTaskError(error: Error)
     case unableToMapResult
