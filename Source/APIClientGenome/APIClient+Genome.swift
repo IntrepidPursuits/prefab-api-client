@@ -34,16 +34,16 @@ public extension APIClient {
 
     // MARK: - Singular Result Type
 
-    public func sendRequest<T: MappableObject>(_ request: URLRequest, keyPath: String? = nil, completion: ((Result<T>) -> Void)?) {
+    public func sendRequest<T: NodeInitializable>(_ request: URLRequest, keyPath: String? = nil, completion: ((Result<T>) -> Void)?) {
         let dataRequestCompletion: (Result<Data?>) -> Void = { dataResult in
             DispatchQueue.main.async{
-                completion?(self.mappableObjectResult(keyPath: keyPath, dataResult: dataResult))
+                completion?(self.nodeInitializableResult(keyPath: keyPath, dataResult: dataResult))
             }
         }
         sendRequest(request, completion: dataRequestCompletion)
     }
 
-    internal func mappableObjectResult<T: MappableObject>(keyPath: String?, dataResult: Result<Data?>) -> Result<T> {
+    internal func nodeInitializableResult<T: NodeInitializable>(keyPath: String?, dataResult: Result<Data?>) -> Result<T> {
         var result: Result<T>
 
         switch dataResult {
@@ -69,16 +69,16 @@ public extension APIClient {
 
     // MARK: - Array Result Type
 
-    public func sendRequest<T: MappableObject>(_ request: URLRequest, keyPath: String? = nil, completion: ((Result<[T]>) -> Void)?) {
+    public func sendRequest<T: NodeInitializable>(_ request: URLRequest, keyPath: String? = nil, completion: ((Result<[T]>) -> Void)?) {
         let dataRequestCompletion: (Result<Data?>) -> Void = { dataResult in
             DispatchQueue.main.async{
-                completion?(self.mappableArrayResult(keyPath: keyPath, dataResult: dataResult))
+                completion?(self.nodeInitializableArrayResult(keyPath: keyPath, dataResult: dataResult))
             }
         }
         sendRequest(request, completion: dataRequestCompletion)
     }
 
-    internal func mappableArrayResult<T: MappableObject>(keyPath: String?, dataResult: Result<Data?>) -> Result<[T]> {
+    internal func nodeInitializableArrayResult<T: NodeInitializable>(keyPath: String?, dataResult: Result<Data?>) -> Result<[T]> {
         var result: Result<[T]>
 
         switch dataResult {
@@ -103,5 +103,4 @@ public extension APIClient {
 
         return result
     }
-
 }
