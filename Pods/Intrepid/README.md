@@ -1,5 +1,5 @@
-[![Build Status](http://ci.intrepid.io:8080/buildStatus/icon?job=Swift Wisdom)](http://ci.intrepid.io:8080/job/Swift%20Wisdom/)
-[![Coverage](http://ci.intrepid.io:9913/jenkins/cobertura/Swift%20Wisdom/)](http://ci.intrepid.io:8080/job/Swift%20Wisdom/cobertura/)
+[![Build Status](https://ci.intrepid.io/buildStatus/icon?job=Swift-Wisdom)](https://ci.intrepid.io/job/Swift-Wisdom/)
+[![Coverage](http://ci.intrepid.io:9913/jenkins/cobertura/Swift-Wisdom/)](https://ci.intrepid.io/job/Swift-Wisdom/cobertura/)
 
 This library is meant to be a general grab bag of Swift methods made by the engineers at IntrepidPursuits.  As this library goes, useful components will be isolated into separate podspecs where appropriate.
 
@@ -20,8 +20,8 @@ pod 'Intrepid/Rx' # Intrepid's RxSwift Extensions
 ### Testing Additions
 
 ```Ruby
-source 'https://github.com/IntrepidPursuits/intrepid-wisdom.git'
-target 'SwiftWisdomTests',
+source 'https://github.com/IntrepidPursuits/swift-wisdom.git'
+target 'YourTestTarget',
     use_frameworks!
     pod 'IntrepidSwiftWisdomTesting'
 end
@@ -45,27 +45,27 @@ A basic wrapper for dispatch operations in Swift.  Syntax example:
     Qu.Background {
         // Sleep for long operation
         sleep(4)
-        log("1")
+        print("1")
     } .Also {
         sleep(4)
-        log("2")
+        print("2")
     } .Also {
         sleep(1)
-        log("3")
+        print("3")
     } .Also {
         sleep(1)
-        log("4")
+        print("4")
     } .Also {
         sleep(1)
-        log("5")
-    } .ThenAfter(.Previous(3)) {
-        log("6: After 5, 4, & 3")
+        print("5")
+    } .ThenAfter(.previous(3)) {
+        print("6: After 5, 4, & 3")
     } .Then {
         sleep(1)
-        log("7: After 6")
-    } .FinallyOn(.Main) {
+        print("7: After 6")
+    } .FinallyOn(.main) {
         sleep(1)
-        log("Finished: After All")
+        print("Finished: After All")
     }
 ```
 

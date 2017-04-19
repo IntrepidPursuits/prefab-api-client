@@ -26,28 +26,9 @@ public func random(inRange range: CountableClosedRange<Int>) -> Int {
 
 // TODO: write tests for this extension
 extension UnsignedInteger {
-    public init(ip_data: NSData) {
-        let hexInt = ip_data.ip_hexInt ?? 0
-        self.init(ip_safely: hexInt)
-    }
-
-    public init(ip_data: Data) {
-        let hexInt = ip_data.ip_hexInt ?? 0
-        self.init(ip_safely: hexInt)
-    }
 
     public func ip_containsBitMask(_ bitMask: Self) -> Bool {
         return (self & bitMask) == bitMask
-    }
-
-    public var ip_data: Data {
-        var copy = self
-        return Data(bytes: &copy, count: MemoryLayout<Self>.size)
-    }
-    
-    public var ip_nsdata: NSData {
-        var copy = self
-        return NSData(bytes: &copy, length: MemoryLayout<Self>.size)
     }
 
     /// Converts a bit mask into its given indexes. For example, `0b101` will return `[0,2]`
@@ -81,10 +62,26 @@ extension UnsignedInteger {
         return MemoryLayout<Self>.size * 8
     }
 
-    // TODO: needs documentation - what is this bitstack stuff?
+    /**
+     * Returns a type with a particular bit pattern of ones. 
+     *
+     * If length > MemoryLayout<Self>.size, the function computes 
+     * ip_bitStackOfLength(MemoryLayout<Self>.size). If length <= 0, the function computes
+     * ip_bitStackOfLength(0)
+     *
+     * Example:                         Corresponding Memory Layout
+     * UInt8.ip_bitStackOfLength(2)        | 0 0 0 0 0 0 1 1 |
+     * UInt8.ip_bitStackOfLength(3)        | 0 0 0 0 0 1 1 1 |
+     *
+     * @param length the number of ones in the bit pattern.
+     *
+     * @return a typed bit pattern
+     */
     public static func ip_bitStackOfLength(_ length: Int) -> Self {
         let maxLength = ip_maximumNumberOfBits
+        guard length > 0 else { return Self(0) }
         guard length <= maxLength else { return ip_bitStackOfLength(maxLength) }
+
         var stack: Self = 0
         for _ in 1...length {
             // stack <<= 1
@@ -116,5 +113,35 @@ extension UnsignedInteger {
         } else {
             self = maxSelf
         }
+    }
+}
+
+extension UInt16 {
+    public var ip_bigEndianData: Data {
+        return CFSwapInt16HostToBig(self).ip_data
+    }
+
+    public var ip_littleEndianData: Data {
+        return CFSwapInt16HostToLittle(self).ip_data
+    }
+}
+
+extension UInt32 {
+    public var ip_bigEndianData: Data {
+        return CFSwapInt32HostToBig(self).ip_data
+    }
+
+    public var ip_littleEndianData: Data {
+        return CFSwapInt32HostToLittle(self).ip_data
+    }
+}
+
+extension UInt64 {
+    public var ip_bigEndianData: Data {
+        return CFSwapInt64HostToBig(self).ip_data
+    }
+
+    public var ip_littleEndianData: Data {
+        return CFSwapInt64HostToLittle(self).ip_data
     }
 }

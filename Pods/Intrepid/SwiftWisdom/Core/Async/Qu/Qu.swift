@@ -8,6 +8,7 @@
 import Foundation
 
 public typealias Block = () -> ()
+public typealias CompletableBlock = (@escaping Block) -> ()
 
 // MARK: Qu
 
@@ -118,10 +119,11 @@ public class Qu {
     @discardableResult public func Finally(_ block: @escaping Block) -> Self {
         let op = Operation(block: block)
         completion = op
+        operationQueue.setCompletion(op)
         return self
     }
     
-    public func FinallyOn(_ priority: Priority, block: @escaping Block) -> Self {
+    @discardableResult public func FinallyOn(_ priority: Priority, block: @escaping Block) -> Self {
         let wrapped: Block = {
             if let queue = priority.queue.underlyingQueue {
                 queue.async(execute: block)
@@ -142,6 +144,18 @@ public class Qu {
         }
         operationQueue += op
         return self
+    }
+
+    /**
+     Accepts a series of blocks and executes them sequentially.
+
+     - Parameter blocks: An array of block functions conforming to the `CompletableBlock` style.
+     */
+    class func executeMultiple(blocks: [CompletableBlock]) {
+        guard let block = blocks.first else { return }
+        block {
+            self.executeMultiple(blocks: Array(blocks.dropFirst()))
+        }
     }
 }
 
@@ -183,7 +197,7 @@ private extension OperationQueue {
         return setCompletion(blockOp)
     }
     
-    func setCompletion(_ blockOp: Operation) -> Operation {
+    @discardableResult func setCompletion(_ blockOp: Operation) -> Operation {
         for op in ops {
             blockOp.addDependency(op)
         }
