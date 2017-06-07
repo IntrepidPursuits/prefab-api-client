@@ -9,12 +9,12 @@ ___
 # Table of Contents
 
 1. [Installation](#installation)
-	2. [Cocoapods](#cocoapods)
-3. [Architecture](#architecture)
-	4. [APIClient](#api-client)
-	5. [Request](#request)
-	6. [Third Party Libraries](#third-party-libraries)
-7. [History](#history)
+    1. [Cocoapods](#cocoapods)
+1. [Architecture](#architecture)
+    1. [APIClient](#api-client)
+    1. [Request](#request)
+    1. [Third Party Libraries](#third-party-libraries)
+1. [History](#history)
 
 ___
 
