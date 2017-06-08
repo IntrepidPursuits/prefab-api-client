@@ -15,17 +15,35 @@ public enum HTTPMethod: String {
     case DELETE
 }
 
+public enum MediaType: String {
+    case json = "application/json"
+    case javascript = "application/javascript"
+    case xml = "application/xml"
+    case zip = "application/zip"
+    case urlEncodedForm = "application/x-www-form-urlencoded"
+    case multipartForm = "multipart/form-data"
+    case png = "image/png"
+    case jpeg = "image/jpeg"
+    case gif = "image/gif"
+    case mpeg = "audio/mpeg"
+    case vorbis = "audio/vorbis"
+    case css = "text/css"
+    case html = "text/html"
+    case plainText = "text/plain"
+}
+
 public protocol Request {
     static var baseURL: String { get }
     static var acceptHeader: String? { get }
+    static var credentialProvider: CredentialProviding? { get }
 
     var method: HTTPMethod { get }
     var path: String { get }
     var authenticated: Bool { get }
     var queryParameters: [String: Any]? { get }
     var bodyParameters: [String: Any]? { get }
+    // Should content type be string or MediaType? Making it MediaType means being locked into one our cases.
     var contentType: String { get }
-    var credentialProvider: CredentialProviding? { get }
 }
 
 public extension Request {
@@ -41,16 +59,23 @@ public extension Request {
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
 
         if authenticated {
-            credentialProvider?.authorizeRequest(&request)
+            Self.credentialProvider?.authorizeRequest(&request)
         }
 
         encodeQueryParameters(request: &request, parameters: queryParameters)
-        encodeHTTPBody(request: &request, parameters: bodyParameters)
+
+        // If we want MutltipartFormRequest to inherit urlRequest behavior from Request, then optional casting like below
+        // is the only way I got it to work consistently.
+        if let form = self as? MultipartFormRequest {
+            form.encodeFormBody(request: &request)
+        } else {
+            encodeHTTPBody(request: &request, parameters: bodyParameters)
+        }
 
         return request as URLRequest
     }
 
-    private func encodeQueryParameters(request: inout URLRequest, parameters: [String : Any]?) {
+    func encodeQueryParameters(request: inout URLRequest, parameters: [String : Any]?) {
         guard let url = request.url,
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let stringParameters = parameters as? [String : String]
@@ -68,9 +93,9 @@ public extension Request {
         request.url = components.url
     }
 
-    private func encodeHTTPBody(request: inout URLRequest, parameters: [String : Any]?) {
+    func encodeHTTPBody(request: inout URLRequest, parameters: [String : Any]?) {
         guard let parameters = parameters else { return }
-
+        
         do {
             let data = try JSONSerialization.data(withJSONObject: parameters, options: [])
             request.httpBody = data

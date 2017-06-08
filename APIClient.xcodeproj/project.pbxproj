@@ -19,6 +19,8 @@
 		5EDDC8881E6DE75300584797 /* MockAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDDC8871E6DE75300584797 /* MockAuthClient.swift */; };
 		5EDDC88A1E6DE90300584797 /* MockAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDDC8891E6DE90300584797 /* MockAPIClient.swift */; };
 		5EF7831F1E687E010066FA24 /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF7831E1E687E010066FA24 /* RequestTests.swift */; };
+		830A9F771E7064370056B214 /* Data+APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830A9F761E7064370056B214 /* Data+APIClient.swift */; };
+		83D4C1AB1E8419E300CD14CB /* MutlipartFormRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D4C1AA1E8419E300CD14CB /* MutlipartFormRequest.swift */; };
 		BB63FD0EF047E27D9084DE31 /* Pods_APIClientTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F7D916833F4B0DF1AE4D3D1 /* Pods_APIClientTests.framework */; };
 		D88F865C05B4384FD2937338 /* Pods_APIClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B24F0D96C0CDC515E696FD /* Pods_APIClient.framework */; };
 /* End PBXBuildFile section */
@@ -57,6 +59,8 @@
 		5EDDC8891E6DE90300584797 /* MockAPIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockAPIClient.swift; sourceTree = "<group>"; };
 		5EF7831E1E687E010066FA24 /* RequestTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTests.swift; sourceTree = "<group>"; };
 		7D8D16CD3CDD9595245D801E /* Pods-APIClientTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APIClientTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-APIClientTests/Pods-APIClientTests.release.xcconfig"; sourceTree = "<group>"; };
+		830A9F761E7064370056B214 /* Data+APIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+APIClient.swift"; sourceTree = "<group>"; };
+		83D4C1AA1E8419E300CD14CB /* MutlipartFormRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutlipartFormRequest.swift; sourceTree = "<group>"; };
 		DC836426EC10CC75E74ED961 /* Pods-APIClient.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APIClient.release.xcconfig"; path = "Pods/Target Support Files/Pods-APIClient/Pods-APIClient.release.xcconfig"; sourceTree = "<group>"; };
 		EE91157109E5FD971BC09B5B /* Pods-APIClientTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APIClientTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-APIClientTests/Pods-APIClientTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -106,7 +110,9 @@
 			children = (
 				5E426F011E57583D005C4C12 /* APIClient.swift */,
 				5E426F031E57583D005C4C12 /* Request.swift */,
+				83D4C1AA1E8419E300CD14CB /* MutlipartFormRequest.swift */,
 				5EDDC87E1E6DDE6400584797 /* Authentication.swift */,
+				830A9F761E7064370056B214 /* Data+APIClient.swift */,
 			);
 			path = APIClient;
 			sourceTree = "<group>";
@@ -374,6 +380,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E426F081E57584A005C4C12 /* APIClient+Genome.swift in Sources */,
+				830A9F771E7064370056B214 /* Data+APIClient.swift in Sources */,
+				83D4C1AB1E8419E300CD14CB /* MutlipartFormRequest.swift in Sources */,
 				5E426F061E57583D005C4C12 /* Request.swift in Sources */,
 				5E426F041E57583D005C4C12 /* APIClient.swift in Sources */,
 				5EDDC87F1E6DDE6400584797 /* Authentication.swift in Sources */,
