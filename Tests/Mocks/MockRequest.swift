@@ -51,46 +51,11 @@ struct TestRequest: Request {
         return "application/json"
     }
 
-    var credentialProvider: CredentialProviding? {
-        return MockCredentialProvider()
+    var accessCredentials: AccessCredentials? {
+        return MockToken()
     }
 }
 
-class MockCredentialProvider: CredentialProviding {
-    var email: String? {
-        get {
-            return "markd@intrepid.io"
-        }
-        set {
-
-        }
-    }
-
-    var password: String? {
-        get {
-            return "Intrepid11!"
-        }
-        set {
-
-        }
-    }
-
-    private var _token: String?
-
-    var token: String? {
-        get {
-            return _token
-        }
-        set {
-            _token = newValue
-        }
-    }
-
-    var formattedToken: String? {
-        if let token = token {
-            return "Token token=\(token)"
-        } else {
-            return nil
-        }
-    }
+class MockCredentialProvider: AccessCredentialProviding {
+    var accessCredentials: AccessCredentials? = MockToken()
 }

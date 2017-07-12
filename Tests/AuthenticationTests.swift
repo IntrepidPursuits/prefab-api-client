@@ -12,15 +12,15 @@ import XCTest
 class AuthenticationTests: XCTestCase {
 
     let apiClient = MockAPIClient()
-    let authClient = MockAuthClient()
+    let loginClient = MockLoginClient()
     let credentialProvider = MockCredentialProvider()
 
-    var sut: AuthTokenRefresher!
+    var sut: AccessCredentialsRefresher!
 
     override func setUp() {
         super.setUp()
 
-        sut = AuthTokenRefresher(apiClient: apiClient, authClient: authClient, credentialProvider: credentialProvider)
+        sut = AccessCredentialsRefresher(apiClient: apiClient, loginClient: loginClient, accessCredentialsProvider: credentialProvider)
     }
     
     override func tearDown() {
@@ -33,10 +33,15 @@ class AuthenticationTests: XCTestCase {
         let testRequest = TestRequest().urlRequest
 
         apiClient.success = true
-        authClient.success = true
+        loginClient.success = true
 
         sut.handleUnauthorizedRequest(request: testRequest) { [weak self] result in
-            XCTAssertEqual(self?.credentialProvider.token, "token")
+            guard let token = self?.credentialProvider.accessCredentials as? MockToken else {
+                XCTFail("Expected MockToken value")
+                return
+            }
+
+            XCTAssertEqual(token.value, "new-token")
             XCTAssert(result.isSuccess)
         }
     }
@@ -46,25 +51,30 @@ class AuthenticationTests: XCTestCase {
 
         // Token refresh succeeds, subsequest request fails
         apiClient.success = false
-        authClient.success = true
+        loginClient.success = true
 
         sut.handleUnauthorizedRequest(request: testRequest) { [weak self] result in
-            XCTAssertEqual(self?.credentialProvider.token, "token")
+            guard let token = self?.credentialProvider.accessCredentials as? MockToken else {
+                XCTFail("Expected MockToken value")
+                return
+            }
+
+            XCTAssertEqual(token.value, "new-token")
             XCTAssert(result.isFailure)
         }
 
         // Token refresh fails
-        authClient.success = false
+        loginClient.success = false
 
         sut.handleUnauthorizedRequest(request: testRequest) { [weak self] result in
-            XCTAssertNil(self?.credentialProvider.token)
+            XCTAssertNil(self?.credentialProvider.accessCredentials)
             XCTAssert(result.isFailure)
         }
     }
 
     func testCredentialProviderAuthorizedRequest() {
         var testRequest = TestRequest().urlRequest
-        credentialProvider.authorizeRequest(&testRequest)
-        XCTAssertEqual(testRequest.value(forHTTPHeaderField: "Authorization"), credentialProvider.formattedToken)
+        credentialProvider.accessCredentials?.authorize(&testRequest)
+        XCTAssertEqual(testRequest.value(forHTTPHeaderField: "Authorization"), "Token token=token")
     }
 }
