@@ -25,7 +25,7 @@ public protocol Request {
     var queryParameters: [String: Any]? { get }
     var bodyParameters: [String: Any]? { get }
     var contentType: String { get }
-    var credentialProvider: CredentialProviding? { get }
+    var accessCredentials: AccessCredentials? { get }
 }
 
 public extension Request {
@@ -41,7 +41,7 @@ public extension Request {
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
 
         if authenticated {
-            credentialProvider?.authorizeRequest(&request)
+            accessCredentials?.authorize(&request)
         }
 
         encodeQueryParameters(request: &request, parameters: queryParameters)

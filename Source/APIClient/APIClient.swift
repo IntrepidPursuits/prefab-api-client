@@ -20,7 +20,7 @@ open class APIClient {
 
     public let session: URLSession
 
-    public var authTokenRefresher: AuthTokenRefresher? = nil
+    public var accessCredentialsRefresher: AccessCredentialsRefresher? = nil
 
     public init(session: URLSession = .shared) {
         self.session = session
@@ -59,8 +59,8 @@ open class APIClient {
         case 200..<300:
             return .success(data)
         case 401:
-            if let authTokenRefresher = authTokenRefresher {
-                authTokenRefresher.handleUnauthorizedRequest(request: request, completion: completion)
+            if let accessCredentialsRefresher = accessCredentialsRefresher {
+                accessCredentialsRefresher.handleUnauthorizedRequest(request: request, completion: completion)
                 return nil
             } else {
                 let error = APIClientError.httpError(statusCode: statusCode, response: httpResponse, data: data)

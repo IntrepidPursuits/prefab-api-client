@@ -10,12 +10,29 @@ import Foundation
 import Intrepid
 @testable import APIClient
 
-class MockAuthClient: AuthClient {
+class MockLoginClient: LoginClient {
+
     var success: Bool = true
 
-    func login(email: String, password: String, completion: ((Result<String>) -> Void)?) {
+    var delegate: LoginClientDelegate?
+
+    func login() {
         if success {
-            completion?(.success("token"))
+            let token = MockToken()
+            delegate?.loginClient(self, didFinishLoginWithResult: .success(token))
+        } else {
+            delegate?.loginClient(self, didFinishLoginWithResult: .failure(APIClientError.unknown))
+        }
+    }
+
+    func logout() {
+        delegate?.loginClientDidDisconnect(self)
+    }
+
+    func refreshLogin(completion: ((Result<AccessCredentials>) -> Void)?) {
+        if success {
+            let token = MockToken(value: "new-token")
+            completion?(.success(token))
         } else {
             completion?(.failure(APIClientError.unknown))
         }
