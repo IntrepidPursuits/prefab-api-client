@@ -7,6 +7,7 @@ xcodeProject.addBuild([
 ])
 
 def config = [
+  deploy: false,
   slack: [
     enabled: true,
     channel: "#jenkins-ether"
