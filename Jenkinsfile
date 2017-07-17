@@ -13,3 +13,5 @@ def config = [
     channel: "#jenkins-ether"
   ]
 ]
+
+xcodePipeline(this, xcodeProject, config)
