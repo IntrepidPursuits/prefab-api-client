@@ -8,7 +8,6 @@
 
 import XCTest
 import Intrepid
-import Genome
 @testable import APIClient
 
 class APIClientTests: XCTestCase {
@@ -114,7 +113,7 @@ class APIClientTests: XCTestCase {
         ]
         do {
             let data = try JSONSerialization.data(withJSONObject: json, options: [])
-            let success: Result<[MockMappableObject]> = sut.nodeInitializableArrayResult(keyPath: nil, dataResult: .success(data))
+            let success: Result<[MockMappableObject]> = sut.nodeInitializableResult(keyPath: nil, dataResult: .success(data))
             let array = success.value
             XCTAssertEqual(array?[0].identifier, "1")
             XCTAssertEqual(array?[0].name, "test")

@@ -7,14 +7,8 @@
 //
 
 import Foundation
-import Genome
 
-final class MockMappableObject: BasicMappable {
-    var identifier: String = ""
-    var name: String = ""
-
-    func sequence(_ map: Map) throws {
-        try identifier <~ map["identifier"]
-        try name <~ map["name"]
-    }
+struct MockMappableObject: Codable {
+    let identifier: String
+    let name: String
 }
