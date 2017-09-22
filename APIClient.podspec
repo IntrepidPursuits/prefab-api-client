@@ -13,17 +13,11 @@ Pod::Spec.new do |s|
   s.exclude_files = "tests/**/*"
   s.platform      = :ios
   s.ios.deployment_target = "9.0"
-  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '3.0' }
+  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '4.0' }
   s.default_subspec = "Core"
 
   s.subspec "Core" do |cs|
     cs.source_files = "Source/APIClient/*.swift"
-    cs.dependency 'Intrepid', '~> 0.7.0'
-  end
-
-  s.subspec "Genome" do |rx|
-    rx.source_files = "Source/APIClientGenome/*.swift"
-    rx.dependency 'Genome', '~> 3.0.0'
-    rx.dependency 'APIClient/Core'
+    cs.dependency 'Intrepid', '~> 0.8.3'
   end
 end
