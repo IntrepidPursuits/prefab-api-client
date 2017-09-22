@@ -1,29 +1,17 @@
 PODS:
-  - Genome (3.0.2):
-    - Genome/Default (= 3.0.2)
-  - Genome/Core (3.0.2):
-    - Genome/Packages
-  - Genome/Default (3.0.2):
-    - Genome/Core
-    - Genome/Foundation
-  - Genome/Foundation (3.0.2):
-    - Genome/Core
-  - Genome/Packages (3.0.2)
-  - Intrepid (0.7.10):
-    - Intrepid/Core (= 0.7.10)
-  - Intrepid/Core (0.7.10):
+  - Intrepid (0.8.3):
+    - Intrepid/Core (= 0.8.3)
+  - Intrepid/Core (0.8.3):
     - IP-UIKit-Wisdom (= 0.0.10)
   - IP-UIKit-Wisdom (0.0.10)
 
 DEPENDENCIES:
-  - Genome
   - Intrepid
 
 SPEC CHECKSUMS:
-  Genome: 44584c1e971899a5a4b20ee87faee452a5f1ac1a
-  Intrepid: 6387b01be08a8c22fa9df6f00dbce55099c1a2e8
+  Intrepid: 4b4b20f67ab01ee8f6c3c391dbfe587eff37dd68
   IP-UIKit-Wisdom: b395a065344071b33659e5f6b918043a97c48a44
 
-PODFILE CHECKSUM: 1114a2c81dbd45dec7db948533479a49837fee21
+PODFILE CHECKSUM: b2f26355d78b143af620655ede7c5501d4ae8a06
 
-COCOAPODS: 1.2.0
+COCOAPODS: 1.3.1

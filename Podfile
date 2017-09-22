@@ -7,7 +7,6 @@ target 'APIClient' do
 
   # Pods for APIClient
   pod 'Intrepid'
-  pod 'Genome'
 
   target 'APIClientTests' do
     inherit! :search_paths
