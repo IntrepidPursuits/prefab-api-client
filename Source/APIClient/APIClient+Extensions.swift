@@ -1,5 +1,5 @@
 //
-//  APIClient+Codable.swift
+//  APIClient+Extensions.swift
 //  APIClient
 //
 //  Created by Mark Daigneault on 2/16/17.
