@@ -1,5 +1,5 @@
 //
-//  APIClient+Genome.swift
+//  APIClient+Codable.swift
 //  APIClient
 //
 //  Created by Mark Daigneault on 2/16/17.
@@ -14,12 +14,12 @@ public extension APIClient {
     // MARK: - Void Result Type
 
     public func sendRequest(_ request: URLRequest, completion: ((Result<Void>) -> Void)?) {
-//        let dataRequestCompletion: (Result<Data?>) -> Void = { dataResult in
-//            DispatchQueue.main.async {
-//                completion?(self.voidResult(dataResult: dataResult))
-//            }
-//        }
-//        sendRequest(request, completion: dataRequestCompletion)
+        let dataRequestCompletion: (Result<Data?>) -> Void = { dataResult in
+            DispatchQueue.main.async {
+                completion?(self.voidResult(dataResult: dataResult))
+            }
+        }
+        sendRequest(request, completion: dataRequestCompletion)
     }
 
     internal func voidResult(dataResult: Result<Data?>) -> Result<Void> {
@@ -33,14 +33,14 @@ public extension APIClient {
 
     // MARK: - Singular Result Type
 
-   /* public func sendRequest<T: Codable>(_ request: URLRequest, keyPath: String? = nil, completion: ((Result<T>) -> Void)?) {
+    public func sendRequest<T: Codable>(_ request: URLRequest, keyPath: String? = nil, completion: ((Result<T>) -> Void)?) {
         let dataRequestCompletion: (Result<Data?>) -> Void = { dataResult in
             DispatchQueue.main.async{
                 completion?(self.nodeInitializableResult(keyPath: keyPath, dataResult: dataResult))
             }
         }
         sendRequest(request, completion: dataRequestCompletion)
-    }*/
+    }
 
     internal func nodeInitializableResult<T: Codable>(keyPath: String?, dataResult: Result<Data?>) -> Result<T> {
         var result: Result<T>
