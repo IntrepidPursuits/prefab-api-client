@@ -28,6 +28,7 @@ public protocol LoginCredentials {
 }
 
 public protocol AccessCredentials {
+    var expirationDate: Date? { get set }
     func authorize(_ request: inout URLRequest)
 }
 
