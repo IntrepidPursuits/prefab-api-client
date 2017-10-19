@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "APIClient"
-  s.version      = "0.1.1"
+  s.version      = "0.1.2"
   s.summary      = "Prefabricated networking layer for Intrepid."
   s.description  = <<-DESC
                    A lightweight networking layer providing success/failure handling and routing.
@@ -17,6 +17,6 @@ Pod::Spec.new do |s|
 
   s.subspec "Core" do |cs|
     cs.source_files = "Source/APIClient/*.swift"
-    cs.dependency 'Intrepid', '~> 0.8.3'
+    cs.dependency 'Intrepid', '~> 0.9.0'
   end
 end
