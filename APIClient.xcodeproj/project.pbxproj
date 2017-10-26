@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		219003951FA23A62005D81D4 /* Decoder+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 219003941FA23A62005D81D4 /* Decoder+Extensions.swift */; };
 		5E426F041E57583D005C4C12 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E426F011E57583D005C4C12 /* APIClient.swift */; };
 		5E426F061E57583D005C4C12 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E426F031E57583D005C4C12 /* Request.swift */; };
 		5E426F081E57584A005C4C12 /* APIClient+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E426F071E57584A005C4C12 /* APIClient+Extensions.swift */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		0F7D916833F4B0DF1AE4D3D1 /* Pods_APIClientTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_APIClientTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		17B24F0D96C0CDC515E696FD /* Pods_APIClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_APIClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		219003941FA23A62005D81D4 /* Decoder+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Decoder+Extensions.swift"; sourceTree = "<group>"; };
 		37C2A59D0A2386F9E25FB702 /* Pods-APIClient.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APIClient.debug.xcconfig"; path = "Pods/Target Support Files/Pods-APIClient/Pods-APIClient.debug.xcconfig"; sourceTree = "<group>"; };
 		5E426F011E57583D005C4C12 /* APIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		5E426F031E57583D005C4C12 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 				5E426F071E57584A005C4C12 /* APIClient+Extensions.swift */,
 				5E426F031E57583D005C4C12 /* Request.swift */,
 				5EDDC87E1E6DDE6400584797 /* Authentication.swift */,
+				219003941FA23A62005D81D4 /* Decoder+Extensions.swift */,
 			);
 			path = APIClient;
 			sourceTree = "<group>";
@@ -383,6 +386,7 @@
 				5E426F081E57584A005C4C12 /* APIClient+Extensions.swift in Sources */,
 				5E426F061E57583D005C4C12 /* Request.swift in Sources */,
 				5E426F041E57583D005C4C12 /* APIClient.swift in Sources */,
+				219003951FA23A62005D81D4 /* Decoder+Extensions.swift in Sources */,
 				5EDDC87F1E6DDE6400584797 /* Authentication.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

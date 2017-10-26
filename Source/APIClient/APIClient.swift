@@ -19,11 +19,12 @@ public enum APIClientError: Error {
 open class APIClient {
 
     public let session: URLSession
-
+    public let decoder: JSONDecoder
     public var accessCredentialsRefresher: AccessCredentialsRefresher? = nil
 
-    public init(session: URLSession = .shared) {
+    public init(session: URLSession = .shared, decoder: JSONDecoder = JSONDecoder()) {
         self.session = session
+        self.decoder = decoder
     }
 
     public func sendRequest(_ request: URLRequest, completion: ((Result<Data?>) -> Void)?) {

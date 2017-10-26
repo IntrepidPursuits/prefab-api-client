@@ -52,16 +52,8 @@ public extension APIClient {
                 return result
             }
             do {
-                let decoder = JSONDecoder()
-
-                if let keyPath = keyPath,
-                    let jsonObject = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String : Any],
-                    let objectAtKeyPath = jsonObject[keyPath] as? T {
-                    result = .success(objectAtKeyPath)
-                } else {
-                    let object = try decoder.decode(T.self, from: data)
-                    result = .success(object)
-                }
+                let object = try T(data: data, keyPath: keyPath, decoder: decoder)
+                result = .success(object)
             } catch {
                 print("Error creating and mapping node: \(error)")
             }
